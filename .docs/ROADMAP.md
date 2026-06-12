@@ -14,32 +14,32 @@ Validar se desenvolvedores possuem interesse em consumir uma curadoria diária d
 
 ## Funcionalidades
 
-* Landing page
-* Lista de espera
-* Radar geral de tecnologia
-* Conteúdo coletado automaticamente de fontes públicas
-* Destaques diários
-* Tendências
-* Ferramentas
-* Releases
-* Conteúdos recomendados
+- Landing page
+- Lista de espera
+- Radar geral de tecnologia
+- Conteúdo coletado automaticamente de fontes públicas
+- Destaques diários
+- Tendências
+- Ferramentas
+- Releases
+- Conteúdos recomendados
 
 ## Não faz parte da V1
 
-* Login
-* Cadastro de usuário
-* Perfil
-* Personalização
-* Gamificação
-* Aplicativo mobile
-* Inteligência artificial
-* Trilhas de aprendizado
+- Login
+- Cadastro de usuário
+- Perfil
+- Personalização
+- Gamificação
+- Aplicativo mobile
+- Inteligência artificial
+- Trilhas de aprendizado
 
 ## Métrica de sucesso
 
-* Cadastros na lista de espera
-* Usuários retornando para consultar o radar
-* Feedback qualitativo dos primeiros usuários
+- Cadastros na lista de espera
+- Usuários retornando para consultar o radar
+- Feedback qualitativo dos primeiros usuários
 
 ---
 
@@ -51,22 +51,22 @@ Permitir que cada usuário acompanhe apenas os temas que considera relevantes.
 
 ## Funcionalidades
 
-* Cadastro de usuário
-* Escolha de temas
-* Radar personalizado
-* Favoritos
-* Histórico de leitura
+- Cadastro de usuário
+- Escolha de temas
+- Radar personalizado
+- Favoritos
+- Histórico de leitura
 
 ## Exemplos de temas
 
-* Angular
-* React
-* IA
-* Cloud
-* DevOps
-* Testes
-* Backend
-* Arquitetura
+- Angular
+- React
+- IA
+- Cloud
+- DevOps
+- Testes
+- Backend
+- Arquitetura
 
 ---
 
@@ -78,11 +78,11 @@ Permitir que o usuário acompanhe novidades e também evolua em temas específic
 
 ## Funcionalidades
 
-* Modo Monitorar
-* Modo Aprender
-* Conteúdo contínuo por tema
-* Recomendações de estudo
-* Evolução por área de conhecimento
+- Modo Monitorar
+- Modo Aprender
+- Conteúdo contínuo por tema
+- Recomendações de estudo
+- Evolução por área de conhecimento
 
 ---
 
@@ -94,11 +94,11 @@ Aumentar retenção e frequência de uso.
 
 ## Funcionalidades
 
-* Streak diário
-* Pontuação
-* Conquistas
-* Metas semanais
-* Progresso de aprendizado
+- Streak diário
+- Pontuação
+- Conquistas
+- Metas semanais
+- Progresso de aprendizado
 
 ---
 
@@ -110,20 +110,20 @@ Transformar o minutoDev em um copiloto de atualização profissional.
 
 ## Funcionalidades
 
-* Recomendações personalizadas
-* Resumos automáticos
-* Radar baseado em interesses
-* Sugestões de carreira
-* Sugestões de aprendizado
+- Recomendações personalizadas
+- Resumos automáticos
+- Radar baseado em interesses
+- Sugestões de carreira
+- Sugestões de aprendizado
 
 ---
 
 # Ideias futuras
 
-* Aplicativo mobile
-* Extensão para navegador
-* Newsletter automática
-* Integração com GitHub
-* Integração com LinkedIn
-* Dashboard de tendências globais
-* Radar para equipes
+- Aplicativo mobile
+- Extensão para navegador
+- Newsletter automática
+- Integração com GitHub
+- Integração com LinkedIn
+- Dashboard de tendências globais
+- Radar para equipes

@@ -62,33 +62,33 @@ Público mais próximo do problema que o produto pretende resolver.
 
 ## Conteúdo
 
-* Quais fontes serão utilizadas inicialmente?
-* Como calcular relevância dos conteúdos?
-* Qual frequência de atualização será utilizada?
+- Quais fontes serão utilizadas inicialmente?
+- Como calcular relevância dos conteúdos?
+- Qual frequência de atualização será utilizada?
 
 ---
 
 ## Produto
 
-* O radar será diário ou múltiplas vezes por dia?
-* Haverá versão gratuita e paga?
-* Qual será o modelo de monetização?
+- O radar será diário ou múltiplas vezes por dia?
+- Haverá versão gratuita e paga?
+- Qual será o modelo de monetização?
 
 ---
 
 ## Aprendizado
 
-* Os usuários desejam apenas novidades?
-* Os usuários desejam aprendizado contínuo?
-* Como equilibrar novidades e aprendizado?
+- Os usuários desejam apenas novidades?
+- Os usuários desejam aprendizado contínuo?
+- Como equilibrar novidades e aprendizado?
 
 ---
 
 ## Experiência
 
-* Qual tempo ideal de consumo diário?
-* Texto ou vídeo gera maior engajamento?
-* Qual formato aumenta retorno dos usuários?
+- Qual tempo ideal de consumo diário?
+- Texto ou vídeo gera maior engajamento?
+- Qual formato aumenta retorno dos usuários?
 
 ---
 
@@ -132,9 +132,9 @@ Não validada.
 
 # Princípios do produto
 
-* Simplicidade acima de quantidade de funcionalidades.
-* Automatizar antes de operar manualmente.
-* Priorizar velocidade de validação.
-* Evitar complexidade desnecessária.
-* Resolver um problema real antes de escalar a solução.
-* Construir baseado em feedback dos usuários.
+- Simplicidade acima de quantidade de funcionalidades.
+- Automatizar antes de operar manualmente.
+- Priorizar velocidade de validação.
+- Evitar complexidade desnecessária.
+- Resolver um problema real antes de escalar a solução.
+- Construir baseado em feedback dos usuários.

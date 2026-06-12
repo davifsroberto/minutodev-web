@@ -1,0 +1,12 @@
+node_modules
+.angular
+.vscode
+.dist
+.husky
+*.yml
+coverage
+documentation
+dist
+helm
+Dockerfile
+tsconfig.federation.json
