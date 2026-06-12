@@ -37,7 +37,12 @@ export default defineConfig(
         ...globals.jest,
       },
       parserOptions: {
-        projectService: true,
+        projectService: {
+          // Arquivos de tooling na raiz que não pertencem a nenhum tsconfig
+          // (app/spec). Sem isso o typed linting falha com "not found by the
+          // project service".
+          allowDefaultProject: ['jest.config.ts', 'jest.config.integration.ts'],
+        },
         tsconfigRootDir: import.meta.dirname,
       },
     },
