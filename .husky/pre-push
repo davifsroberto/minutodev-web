@@ -1,0 +1,6 @@
+npm run lint:fix
+
+npm run test
+npm run test:integration
+
+npm run build

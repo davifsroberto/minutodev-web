@@ -11,7 +11,8 @@
     "lint:check": "eslint \"**/*.{ts,js,json,html}\"",
     "lint:fix": "eslint \"**/*.{ts,js,json,html}\" --fix",
     "pretty:check": "prettier --config ./.prettierrc --check \"./**/*.{ts,js,json,html,scss,css,md}\"",
-    "pretty:fix": "prettier --config ./.prettierrc --write \"**/*.{ts,js,json,html,scss,css,md}\""
+    "pretty:fix": "prettier --config ./.prettierrc --write \"**/*.{ts,js,json,html,scss,css,md}\"",
+    "prepare": "husky"
   },
   "private": true,
   "packageManager": "npm@11.13.0",
@@ -37,6 +38,7 @@
     "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-prettier": "^5.5.6",
     "eslint-plugin-simple-import-sort": "^13.0.0",
+    "husky": "^9.1.7",
     "jest-preset-angular": "^16.2.0",
     "jsdom": "^28.0.0",
     "lint-staged": "^17.0.7",
