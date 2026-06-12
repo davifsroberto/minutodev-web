@@ -47,7 +47,11 @@
   text-decoration: none;
 }
 
-.site-header__cta {
+/* Right-aligned cluster: theme toggle + CTA, plus the menu button on mobile. */
+.site-header__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
   margin-left: auto;
 }
 
@@ -55,7 +59,6 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  margin-left: auto;
   padding: var(--space-2);
   color: var(--color-text);
   background-color: transparent;
@@ -94,9 +97,11 @@
     display: none;
   }
 
+  /* Nav sits next to the wordmark on the left; the actions cluster keeps its
+     `margin-left: auto`, so the theme toggle + CTA stay isolated on the right,
+     clearly apart from the menu links. */
   .site-nav {
     display: block;
-    margin-left: auto;
   }
 
   .site-nav.is-open {
@@ -110,9 +115,5 @@
   .site-nav.is-open .site-nav__list {
     flex-direction: row;
     gap: var(--space-6);
-  }
-
-  .site-header__cta {
-    margin-left: 0;
   }
 }

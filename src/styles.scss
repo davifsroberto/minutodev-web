@@ -6,11 +6,20 @@
    ========================================================================== */
 
 :root {
+  /* Default (light) theme. Native form controls / scrollbars follow this. */
+  color-scheme: light;
+
   /* --- Brand — Kraken purple scale ------------------------------------- */
-  --color-brand: #7132f5;
-  --color-brand-dark: #5741d8;
+  --color-brand: #7132f5; /* accent text: links, eyebrow, wordmark accent */
+  --color-brand-dark: #5741d8; /* outline button text/border */
   --color-brand-deep: #5b1ecf;
   --color-brand-subtle: rgba(133, 91, 251, 0.16);
+  /* Solid brand fill that ALWAYS carries `--color-on-brand` text (CTAs).
+     Kept separate from `--color-brand` so each theme can tune the accent
+     text and the button fill independently while staying AA-safe. */
+  --color-brand-solid: #7132f5;
+  --color-brand-solid-hover: #5741d8;
+  --color-on-brand: #ffffff; /* text/icons on a solid brand fill */
 
   /* --- Text & neutrals (AA-safe choices noted) ------------------------- */
   --color-text: #101114; /* primary text — ~16:1 on white */
@@ -32,6 +41,9 @@
   --color-success: #149e61;
   --color-success-bg: rgba(20, 158, 97, 0.16);
   --color-success-text: #026b3f;
+
+  /* --- Semantic — danger (invalid fields, errors) ---------------------- */
+  --color-danger: #b42318; /* ~5.9:1 on white (AA ok) */
 
   /* --- Neutral badge --------------------------------------------------- */
   --color-badge-neutral-bg: rgba(104, 107, 130, 0.12);
@@ -81,6 +93,54 @@
   /* --- Layout ----------------------------------------------------------- */
   --container-max: 1120px;
   --header-height: 4.5rem;
+}
+
+/* ==========================================================================
+   Dark theme
+   Activated by `data-theme="dark"` on <html> (set pre-paint by the inline
+   script in index.html and kept in sync by ThemeService). Only color tokens
+   are overridden — every component already consumes them, so nothing else
+   needs to change. All text/background pairs below meet WCAG AA (>=4.5:1).
+   ========================================================================== */
+[data-theme='dark'] {
+  color-scheme: dark;
+
+  /* Brand: brighten the accent for contrast on dark; keep the solid CTA
+     fill dark enough that white text still passes AA. */
+  --color-brand: #9d7bff; /* accent text — 5.8:1 on surface */
+  --color-brand-dark: #a78bff; /* outline button text/border — 6.8:1 */
+  --color-brand-deep: #b59dff;
+  --color-brand-subtle: rgba(133, 91, 251, 0.22);
+  --color-brand-solid: #7c4dff; /* CTA fill — white text 4.8:1 */
+  --color-brand-solid-hover: #6d3af0; /* 6.0:1 with white */
+  --color-on-brand: #ffffff;
+
+  /* Text & neutrals */
+  --color-text: #f2f3f7; /* 16:1 on surface */
+  --color-text-secondary: #aab0c4; /* 8.4:1 on surface (AA ok) */
+  --color-text-subtle: #6e7286; /* decorative / large text ONLY */
+  --color-surface: #14151a;
+  --color-surface-subtle: rgba(170, 176, 196, 0.1);
+  --color-surface-brand: rgba(133, 91, 251, 0.2);
+  --color-surface-translucent: rgba(20, 21, 26, 0.82); /* glass header */
+  --color-border: #2a2c36;
+  --color-border-soft: rgba(170, 176, 196, 0.16);
+
+  /* Semantic — success */
+  --color-success: #2bb673;
+  --color-success-bg: rgba(43, 182, 115, 0.18);
+  --color-success-text: #3ecf8e; /* 9.1:1 on surface */
+
+  /* Semantic — danger */
+  --color-danger: #ff6b5e; /* 6.5:1 on surface */
+
+  /* Neutral badge */
+  --color-badge-neutral-bg: rgba(170, 176, 196, 0.14);
+  --color-badge-neutral-text: #c3c7d6;
+
+  /* Elevation — opaque shadows read better against dark surfaces. */
+  --shadow-subtle: rgba(0, 0, 0, 0.4) 0px 4px 24px;
+  --shadow-micro: rgba(0, 0, 0, 0.5) 0px 1px 4px;
 }
 
 /* --- Reset ------------------------------------------------------------- */
@@ -243,13 +303,13 @@ p {
 }
 
 .btn--primary {
-  background-color: var(--color-brand);
-  color: #ffffff;
+  background-color: var(--color-brand-solid);
+  color: var(--color-on-brand);
 }
 
 .btn--primary:hover {
-  background-color: var(--color-brand-dark);
-  color: #ffffff;
+  background-color: var(--color-brand-solid-hover);
+  color: var(--color-on-brand);
 }
 
 .btn--outline {
@@ -269,8 +329,8 @@ p {
 }
 
 .btn--subtle:hover {
-  background-color: var(--color-brand);
-  color: #ffffff;
+  background-color: var(--color-brand-solid);
+  color: var(--color-on-brand);
 }
 
 .btn--block {
@@ -328,8 +388,8 @@ p {
   top: var(--space-2);
   z-index: 1000;
   transform: translateY(-200%);
-  background-color: var(--color-brand);
-  color: #ffffff;
+  background-color: var(--color-brand-solid);
+  color: var(--color-on-brand);
   padding: var(--space-2) var(--space-4);
   border-radius: var(--radius-md);
   transition: transform 0.2s ease;

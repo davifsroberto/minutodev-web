@@ -35,7 +35,7 @@ input::placeholder {
 }
 
 input[aria-invalid='true'] {
-  border-color: #b42318;
+  border-color: var(--color-danger);
 }
 
 .hint {
@@ -45,7 +45,7 @@ input[aria-invalid='true'] {
 
 .error {
   font-size: var(--fs-caption);
-  color: #b42318;
+  color: var(--color-danger);
 }
 
 .status {

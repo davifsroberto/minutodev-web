@@ -5,8 +5,11 @@ import {
   signal,
 } from '@angular/core';
 
+import { ThemeToggleComponent } from '../../../../core/theme/theme-toggle.component';
+
 @Component({
   selector: 'app-landing-header',
+  imports: [ThemeToggleComponent],
   templateUrl: './landing-header.component.html',
   styleUrl: './landing-header.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
