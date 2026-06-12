@@ -1,0 +1,18 @@
+<section class="section" id="como-funciona" aria-labelledby="como-title">
+  <div class="container">
+    <div class="section__head">
+      <span class="eyebrow">Como funciona</span>
+      <h2 id="como-title">Seu radar de tecnologia, pronto todo dia.</h2>
+    </div>
+
+    <ol class="steps">
+      @for (item of steps; track item.step) {
+        <li class="card step">
+          <span class="step__number" aria-hidden="true">{{ item.step }}</span>
+          <h3 class="step__title">{{ item.title }}</h3>
+          <p class="step__description">{{ item.description }}</p>
+        </li>
+      }
+    </ol>
+  </div>
+</section>

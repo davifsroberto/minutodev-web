@@ -1,0 +1,70 @@
+<header class="site-header">
+  <div class="container site-header__inner">
+    <a class="wordmark" href="#topo" aria-label="minutoDev — início">
+      minuto<span class="wordmark__accent">Dev</span>
+    </a>
+
+    <button
+      type="button"
+      class="menu-toggle"
+      aria-controls="primary-nav"
+      [attr.aria-expanded]="menuOpen()"
+      [attr.aria-label]="toggleLabel()"
+      (click)="toggleMenu()"
+    >
+      @if (menuOpen()) {
+        <svg
+          class="menu-toggle__icon"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          aria-hidden="true"
+          focusable="false"
+        >
+          <path d="M6 6 18 18" />
+          <path d="M18 6 6 18" />
+        </svg>
+      } @else {
+        <svg
+          class="menu-toggle__icon"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          aria-hidden="true"
+          focusable="false"
+        >
+          <path d="M4 7h16" />
+          <path d="M4 12h16" />
+          <path d="M4 17h16" />
+        </svg>
+      }
+    </button>
+
+    <nav
+      id="primary-nav"
+      class="site-nav"
+      [class.is-open]="menuOpen()"
+      aria-label="Principal"
+    >
+      <ul class="site-nav__list">
+        <li>
+          <a class="site-nav__link" href="#como-funciona">Como funciona</a>
+        </li>
+        <li><a class="site-nav__link" href="#radar">O radar</a></li>
+        <li><a class="site-nav__link" href="#publico">Para quem é</a></li>
+      </ul>
+    </nav>
+
+    <a class="btn btn--primary site-header__cta" href="#lista-de-espera"
+      >Entrar na lista de espera</a
+    >
+  </div>
+</header>

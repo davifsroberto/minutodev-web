@@ -1,0 +1,53 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+  <div class="field">
+    <label for="waitlist-email">E-mail</label>
+
+    <input
+      id="waitlist-email"
+      type="email"
+      formControlName="email"
+      autocomplete="email"
+      inputmode="email"
+      placeholder="voce@email.com"
+      [attr.aria-invalid]="email.invalid && email.touched ? 'true' : null"
+      [attr.aria-describedby]="
+        email.invalid && email.touched
+          ? 'waitlist-hint waitlist-error'
+          : 'waitlist-hint'
+      "
+    />
+
+    <span id="waitlist-hint" class="hint"
+      >Sem spam. Cancele quando quiser.</span
+    >
+
+    @if (email.invalid && email.touched) {
+      <p id="waitlist-error" class="error" role="alert">
+        Informe um e-mail válido.
+      </p>
+    }
+  </div>
+
+  <button
+    class="btn btn--primary btn--block"
+    type="submit"
+    [disabled]="status() === 'loading'"
+    [attr.aria-busy]="status() === 'loading' ? 'true' : null"
+  >
+    {{ submitLabel() }}
+  </button>
+
+  <p class="status" role="status" aria-live="polite">
+    @switch (status()) {
+      @case ('success') {
+        <span class="status--success"
+          >Pronto! Você está na lista. Avisaremos assim que o minutoDev
+          abrir.</span
+        >
+      }
+      @case ('error') {
+        <span>Algo deu errado. Tente novamente.</span>
+      }
+    }
+  </p>
+</form>

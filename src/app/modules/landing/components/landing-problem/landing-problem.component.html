@@ -1,0 +1,33 @@
+<section class="section" id="problema" aria-labelledby="problema-title">
+  <div class="container">
+    <div class="section__head">
+      <span class="eyebrow">O problema</span>
+      <h2 id="problema-title">Informação demais, tempo de menos.</h2>
+      <p class="lead">
+        Acompanhar novidades relevantes exige navegar por blogs, GitHub,
+        newsletters, LinkedIn, comunidades e vídeos. O resultado é excesso de
+        informação e a sensação constante de estar por fora.
+      </p>
+    </div>
+
+    <ul class="sources">
+      @for (source of sources; track source.label) {
+        <li class="sources__chip">
+          <svg
+            class="sources__dot"
+            viewBox="0 0 8 8"
+            width="8"
+            height="8"
+            aria-hidden="true"
+            focusable="false"
+          >
+            <circle cx="4" cy="4" r="4" fill="currentColor" />
+          </svg>
+          <span class="sources__label">{{ source.label }}</span>
+        </li>
+      }
+    </ul>
+
+    <p class="closing">O minutoDev reúne tudo isso em um só lugar.</p>
+  </div>
+</section>

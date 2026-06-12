@@ -1,0 +1,34 @@
+<section class="section" id="publico" aria-labelledby="publico-title">
+  <div class="container">
+    <div class="section__head">
+      <p class="eyebrow">Para quem é</p>
+      <h2 id="publico-title">Feito para quem vive de tecnologia.</h2>
+    </div>
+
+    <ul class="audience-grid">
+      @for (card of cards; track card.title) {
+        <li class="card audience-card">
+          <span class="audience-card__icon" aria-hidden="true">
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              focusable="false"
+              aria-hidden="true"
+            >
+              <polyline points="16 18 22 12 16 6" />
+              <polyline points="8 6 2 12 8 18" />
+            </svg>
+          </span>
+          <h3 class="audience-card__title">{{ card.title }}</h3>
+          <p class="audience-card__description">{{ card.description }}</p>
+        </li>
+      }
+    </ul>
+  </div>
+</section>

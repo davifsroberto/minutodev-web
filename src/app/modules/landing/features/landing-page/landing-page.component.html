@@ -1,0 +1,19 @@
+<a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+<app-landing-header />
+<main id="conteudo">
+  <app-landing-hero />
+  <app-landing-problem />
+  <app-landing-how-it-works />
+  <app-landing-radar-preview
+    [items]="radarItems"
+    [estimatedMinutes]="estimatedMinutes"
+  />
+  <app-landing-audience />
+  <app-landing-final-cta>
+    <app-waitlist-form
+      [status]="waitlistStatus()"
+      (submitted)="onJoin($event)"
+    />
+  </app-landing-final-cta>
+</main>
+<app-landing-footer />
