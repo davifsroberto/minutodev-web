@@ -1,0 +1,50 @@
+/* Host stays out of layout flow; the anchor itself is fixed-positioned. */
+:host {
+  display: contents;
+}
+
+.back-to-top {
+  position: fixed;
+  right: clamp(1rem, 3vw, 2rem);
+  bottom: clamp(1rem, 3vw, 2rem);
+  z-index: 60; /* above the sticky header (z-index 50) */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  height: 3rem;
+  border-radius: var(--radius-pill);
+  background-image: var(--gradient-brand);
+  color: var(--color-on-brand);
+  border: 1px solid var(--color-border-soft);
+  box-shadow: var(--glow-brand);
+
+  /* Hidden until scrolled: faded, nudged down, and non-interactive. */
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(14px);
+  transition:
+    opacity 0.25s ease,
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    visibility 0.25s ease;
+}
+
+.back-to-top.is-visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.back-to-top:hover {
+  text-decoration: none;
+  box-shadow: var(--glow-brand-strong);
+}
+
+.back-to-top.is-visible:hover {
+  transform: translateY(-3px);
+}
+
+.back-to-top__icon {
+  display: block;
+}

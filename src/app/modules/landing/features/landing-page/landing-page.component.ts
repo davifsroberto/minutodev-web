@@ -7,6 +7,7 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
+import { BackToTopComponent } from '../../components/back-to-top/back-to-top.component';
 import { LandingAudienceComponent } from '../../components/landing-audience/landing-audience.component';
 import { LandingFinalCtaComponent } from '../../components/landing-final-cta/landing-final-cta.component';
 import { LandingFooterComponent } from '../../components/landing-footer/landing-footer.component';
@@ -32,6 +33,7 @@ import { WaitlistService } from '../../services/waitlist.service';
     LandingFinalCtaComponent,
     WaitlistFormComponent,
     LandingFooterComponent,
+    BackToTopComponent,
   ],
   templateUrl: './landing-page.component.html',
   styleUrl: './landing-page.component.scss',
