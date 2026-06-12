@@ -21,11 +21,20 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: var(--space-10);
-  height: var(--space-10);
-  border-radius: var(--radius-md);
-  background-color: var(--color-brand-subtle);
-  color: var(--color-brand);
+  width: var(--space-12);
+  height: var(--space-12);
+  border-radius: var(--radius-lg);
+  background-image: var(--gradient-brand);
+  color: var(--color-on-brand);
+  box-shadow: var(--glow-brand);
+  transition:
+    transform 0.28s ease,
+    box-shadow 0.28s ease;
+}
+
+.audience-card:hover .audience-card__icon {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: var(--glow-brand-strong);
 }
 
 .audience-card__title {

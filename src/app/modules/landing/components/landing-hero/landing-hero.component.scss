@@ -2,7 +2,17 @@
   display: block;
 }
 
+.hero {
+  overflow: hidden;
+}
+
 .hero__inner {
+  display: grid;
+  gap: clamp(2.5rem, 6vw, 4rem);
+  align-items: center;
+}
+
+.hero__copy {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -10,7 +20,7 @@
 }
 
 .hero__title {
-  max-width: 46rem;
+  max-width: 18ch;
   margin: 0;
 }
 
@@ -25,8 +35,218 @@
   gap: var(--space-3);
 }
 
+/* Mono "stat" chips — quiet, terminal-flavoured credibility markers. */
+.hero__stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin: var(--space-2) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.hero__stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-surface-subtle);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+
+.hero__stat-value {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: var(--fs-feature);
+  color: var(--color-text);
+  line-height: 1.1;
+}
+
+.hero__stat-label {
+  font-size: var(--fs-small);
+  color: var(--color-text-secondary);
+}
+
 .hero__reassurance {
   margin: 0;
   color: var(--color-text-secondary);
   font-size: var(--fs-caption);
+}
+
+/* ---------------------------------------------------------------------------
+   Radar visualisation — concentric rings, a rotating sweep wedge and pulsing
+   blips. On-brand for a "radar of tech". Decorative (aria-hidden); all motion
+   is paused under prefers-reduced-motion by the global reset.
+--------------------------------------------------------------------------- */
+.hero__visual {
+  display: flex;
+  justify-content: center;
+}
+
+.radar {
+  position: relative;
+  width: min(100%, 24rem);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 1px solid var(--color-border-soft);
+  background:
+    radial-gradient(
+      circle at 50% 50%,
+      var(--color-surface-brand),
+      transparent 72%
+    ),
+    var(--color-surface);
+  box-shadow:
+    inset 0 0 50px -10px var(--color-surface-brand),
+    var(--glow-brand);
+  overflow: hidden;
+  animation: radar-float 7s ease-in-out infinite;
+}
+
+.radar__ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  translate: -50% -50%;
+  border-radius: 50%;
+  border: 1px solid var(--color-border-soft);
+}
+
+.radar__ring--lg {
+  width: 100%;
+  height: 100%;
+}
+
+.radar__ring--md {
+  width: 66%;
+  height: 66%;
+}
+
+.radar__ring--sm {
+  width: 33%;
+  height: 33%;
+}
+
+.radar__axis {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  translate: -50% -50%;
+  background: var(--color-border-soft);
+}
+
+.radar__axis--h {
+  width: 100%;
+  height: 1px;
+}
+
+.radar__axis--v {
+  width: 1px;
+  height: 100%;
+}
+
+/* The rotating sweep: a soft wedge of brand light trailing to transparent. */
+.radar__sweep {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 0deg,
+    color-mix(in srgb, var(--color-brand) 42%, transparent) 0deg,
+    color-mix(in srgb, var(--color-brand) 8%, transparent) 38deg,
+    transparent 70deg,
+    transparent 360deg
+  );
+  transform-origin: center;
+  animation: radar-sweep 4s linear infinite;
+}
+
+.radar__core {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  translate: -50% -50%;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--color-brand);
+  box-shadow: 0 0 16px 2px
+    color-mix(in srgb, var(--color-brand) 60%, transparent);
+}
+
+.radar__blip {
+  position: absolute;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--color-brand);
+  box-shadow: 0 0 10px 1px
+    color-mix(in srgb, var(--color-brand) 70%, transparent);
+  animation: radar-blip 4s ease-in-out infinite;
+}
+
+.radar__blip--1 {
+  top: 28%;
+  left: 64%;
+  animation-delay: 0.2s;
+}
+
+.radar__blip--2 {
+  top: 60%;
+  left: 38%;
+  animation-delay: 1.4s;
+}
+
+.radar__blip--3 {
+  top: 44%;
+  left: 76%;
+  animation-delay: 2.6s;
+  background: var(--color-success);
+  box-shadow: 0 0 10px 1px
+    color-mix(in srgb, var(--color-success) 70%, transparent);
+}
+
+.radar__blip--4 {
+  top: 72%;
+  left: 62%;
+  animation-delay: 3.2s;
+}
+
+@keyframes radar-sweep {
+  to {
+    rotate: 360deg;
+  }
+}
+
+@keyframes radar-blip {
+  0%,
+  100% {
+    opacity: 0.25;
+    transform: scale(0.7);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes radar-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@media (min-width: 920px) {
+  .hero__inner {
+    grid-template-columns: 1.05fr 0.95fr;
+  }
+
+  .hero__title {
+    font-size: clamp(2.75rem, 1.6rem + 3.4vw, 3.75rem);
+  }
 }

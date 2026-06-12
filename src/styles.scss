@@ -53,6 +53,9 @@
   --font-display:
     'IBM Plex Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   --font-ui: 'IBM Plex Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --font-mono:
+    'IBM Plex Mono', ui-monospace, 'SF Mono', 'SFMono-Regular', Menlo, Consolas,
+    monospace;
 
   --fs-hero: clamp(2.25rem, 1.4rem + 3.6vw, 3rem); /* up to 48px */
   --fs-section: clamp(1.75rem, 1.3rem + 1.9vw, 2.25rem); /* up to 36px */
@@ -89,6 +92,36 @@
   /* --- Elevation -------------------------------------------------------- */
   --shadow-subtle: rgba(0, 0, 0, 0.03) 0px 4px 24px;
   --shadow-micro: rgba(16, 24, 40, 0.04) 0px 1px 4px;
+  --shadow-card-hover:
+    rgba(113, 50, 245, 0.12) 0px 18px 48px -16px,
+    rgba(16, 24, 40, 0.08) 0px 8px 24px -12px;
+
+  /* --- Gradients & glow (the "technological" layer) -------------------- */
+  --gradient-brand: linear-gradient(
+    135deg,
+    #7132f5 0%,
+    #9d5cff 55%,
+    #5b8dff 100%
+  );
+  --gradient-text: linear-gradient(
+    115deg,
+    #5b1ecf 0%,
+    #7132f5 45%,
+    #a855f7 100%
+  );
+  --gradient-soft: linear-gradient(
+    160deg,
+    rgba(113, 50, 245, 0.1),
+    rgba(91, 141, 255, 0.04)
+  );
+  --glow-brand: 0 10px 32px -10px rgba(113, 50, 245, 0.55);
+  --glow-brand-strong: 0 14px 40px -10px rgba(113, 50, 245, 0.7);
+
+  /* Decorative background layers (grid + ambient glows). */
+  --grid-line: rgba(16, 17, 20, 0.045);
+  --grid-size: 44px;
+  --ambient-1: rgba(113, 50, 245, 0.12);
+  --ambient-2: rgba(91, 141, 255, 0.08);
 
   /* --- Layout ----------------------------------------------------------- */
   --container-max: 1120px;
@@ -141,6 +174,34 @@
   /* Elevation — opaque shadows read better against dark surfaces. */
   --shadow-subtle: rgba(0, 0, 0, 0.4) 0px 4px 24px;
   --shadow-micro: rgba(0, 0, 0, 0.5) 0px 1px 4px;
+  --shadow-card-hover:
+    rgba(124, 77, 255, 0.28) 0px 20px 52px -18px,
+    rgba(0, 0, 0, 0.5) 0px 8px 28px -12px;
+
+  /* Gradients & glow — brighter accents pop against the dark canvas. */
+  --gradient-brand: linear-gradient(
+    135deg,
+    #7c4dff 0%,
+    #9d7bff 55%,
+    #6aa7ff 100%
+  );
+  --gradient-text: linear-gradient(
+    115deg,
+    #b59dff 0%,
+    #9d7bff 38%,
+    #6aa7ff 100%
+  );
+  --gradient-soft: linear-gradient(
+    160deg,
+    rgba(124, 77, 255, 0.2),
+    rgba(106, 167, 255, 0.06)
+  );
+  --glow-brand: 0 12px 36px -10px rgba(124, 77, 255, 0.6);
+  --glow-brand-strong: 0 16px 48px -10px rgba(124, 77, 255, 0.8);
+
+  --grid-line: rgba(255, 255, 255, 0.05);
+  --ambient-1: rgba(124, 77, 255, 0.22);
+  --ambient-2: rgba(106, 167, 255, 0.14);
 }
 
 /* --- Reset ------------------------------------------------------------- */
@@ -168,6 +229,20 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
+}
+
+/* Ambient glow canvas — fixed, behind everything, themed via tokens.
+   Two soft radial pools of brand/blue light give the page atmospheric depth
+   without competing with content. */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(60rem 40rem at 12% -8%, var(--ambient-1), transparent 60%),
+    radial-gradient(48rem 38rem at 100% 0%, var(--ambient-2), transparent 55%);
 }
 
 img,
@@ -255,19 +330,72 @@ p {
 }
 
 .eyebrow {
-  display: inline-block;
-  font-size: var(--fs-caption);
-  font-weight: 600;
-  letter-spacing: 0.04em;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-mono);
+  font-size: var(--fs-small);
+  font-weight: 500;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--color-brand);
-  margin-bottom: var(--space-3);
+  margin-bottom: var(--space-4);
+  padding: 0.35rem 0.7rem;
+  border: 1px solid var(--color-border-soft);
+  border-radius: var(--radius-pill);
+  background: var(--gradient-soft);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+/* Small leading dot for the eyebrow pill — a quiet "signal active" cue. */
+.eyebrow::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: var(--radius-pill);
+  background: var(--color-brand);
+  box-shadow: 0 0 0 3px var(--color-brand-subtle);
 }
 
 .lead {
   font-size: clamp(1.0625rem, 1rem + 0.4vw, 1.25rem);
   line-height: 1.55;
   color: var(--color-text-secondary);
+}
+
+/* Brand gradient applied to text — used on large display headings only,
+   where the gradient stays comfortably legible (large-text AA). */
+.text-gradient {
+  background: var(--gradient-text);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Technical grid backdrop, faded toward the edges with a radial mask so it
+   reads as ambient texture rather than a hard table. */
+.tech-grid {
+  position: relative;
+  isolation: isolate;
+}
+
+.tech-grid::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image:
+    linear-gradient(var(--grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+  background-size: var(--grid-size) var(--grid-size);
+  -webkit-mask-image: radial-gradient(
+    70% 60% at 50% 35%,
+    #000 0%,
+    transparent 78%
+  );
+  mask-image: radial-gradient(70% 60% at 50% 35%, #000 0%, transparent 78%);
 }
 
 /* --- Buttons (radius capped at 12px per DESIGN.md) -------------------- */
@@ -289,7 +417,8 @@ p {
     background-color 0.2s ease,
     color 0.2s ease,
     border-color 0.2s ease,
-    box-shadow 0.2s ease;
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
 }
 
 .btn:hover {
@@ -304,12 +433,20 @@ p {
 
 .btn--primary {
   background-color: var(--color-brand-solid);
+  background-image: var(--gradient-brand);
   color: var(--color-on-brand);
+  box-shadow: var(--glow-brand);
 }
 
 .btn--primary:hover {
   background-color: var(--color-brand-solid-hover);
   color: var(--color-on-brand);
+  box-shadow: var(--glow-brand-strong);
+  transform: translateY(-2px);
+}
+
+.btn--primary:active {
+  transform: translateY(0);
 }
 
 .btn--outline {
@@ -362,11 +499,38 @@ p {
 
 /* --- Card -------------------------------------------------------------- */
 .card {
+  position: relative;
   background-color: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-xl);
   padding: var(--space-6);
   box-shadow: var(--shadow-subtle);
+  transition:
+    transform 0.28s ease,
+    box-shadow 0.28s ease,
+    border-color 0.28s ease;
+}
+
+/* Gradient hairline along the top edge — lights up on hover. */
+.card::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  height: 1px;
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  background: var(--gradient-brand);
+  opacity: 0;
+  transition: opacity 0.28s ease;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  border-color: var(--color-border-soft);
+  box-shadow: var(--shadow-card-hover);
+}
+
+.card:hover::before {
+  opacity: 0.8;
 }
 
 /* --- Accessibility utilities ------------------------------------------ */
@@ -398,6 +562,39 @@ p {
 .skip-link:focus {
   transform: translateY(0);
   text-decoration: none;
+}
+
+/* --- Scroll-driven entrance reveals -----------------------------------
+   Pure CSS via scroll-driven animations: each element fades/rises as it
+   enters the viewport. No JS, no IntersectionObserver. Browsers without
+   `animation-timeline` simply render the final (visible) state, and the
+   reduced-motion block below neutralises it entirely. Targeting shared
+   layout classes keeps templates clean. */
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    /* `translate` (not `transform`) so a card's hover `transform` still
+       composes with the settled reveal state instead of being overridden. */
+    translate: 0 24px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    /* Scoped to grid items only. Headings, leads and the CTA panel stay
+       opacity:1 at all times — content is never hidden behind an animation
+       that hasn't progressed, so the page degrades safely. */
+    .card,
+    .sources__chip {
+      animation: reveal-up both linear;
+      animation-timeline: view();
+      animation-range: entry 0% cover 18%;
+    }
+  }
 }
 
 /* --- Reduced motion ---------------------------------------------------- */
