@@ -38,6 +38,23 @@
   text-align: left;
 }
 
+.final-cta__credibility {
+  margin-top: var(--space-8);
+  padding-top: var(--space-6);
+  border-top: 1px solid var(--color-border-soft);
+}
+
+.final-cta__signature {
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.final-cta__mission {
+  margin-top: var(--space-2);
+  font-size: var(--fs-caption);
+  color: var(--color-text-secondary);
+}
+
 @media (min-width: 768px) {
   .final-cta__panel {
     padding: var(--space-10) var(--space-10);

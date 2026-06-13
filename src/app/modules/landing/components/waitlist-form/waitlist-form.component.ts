@@ -38,7 +38,7 @@ export class WaitlistFormComponent {
       case 'success':
         return 'Tudo certo!';
       default:
-        return 'Entrar na lista';
+        return 'Quero acesso antecipado';
     }
   });
 

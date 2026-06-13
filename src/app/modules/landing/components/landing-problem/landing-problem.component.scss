@@ -51,8 +51,16 @@
   color: var(--color-brand);
 }
 
-.closing {
+.result {
+  max-width: 42rem;
   margin-top: var(--space-8);
+  font-size: clamp(1.0625rem, 1rem + 0.4vw, 1.25rem);
+  line-height: 1.55;
+  color: var(--color-text-secondary);
+}
+
+.closing {
+  margin-top: var(--space-6);
   font-size: var(--fs-feature);
   font-weight: 600;
   color: var(--color-text);

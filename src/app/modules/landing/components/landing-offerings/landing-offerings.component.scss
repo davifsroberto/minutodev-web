@@ -1,0 +1,60 @@
+:host {
+  display: block;
+}
+
+.offerings-grid {
+  list-style: none;
+  margin: var(--space-8) 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-5);
+}
+
+.offering-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.offering-card__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--space-12);
+  height: var(--space-12);
+  border-radius: var(--radius-lg);
+  background-image: var(--gradient-brand);
+  color: var(--color-on-brand);
+  box-shadow: var(--glow-brand);
+  transition:
+    transform 0.28s ease,
+    box-shadow 0.28s ease;
+}
+
+.offering-card:hover .offering-card__icon {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: var(--glow-brand-strong);
+}
+
+.offering-card__title {
+  margin: 0;
+}
+
+.offering-card__description {
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-size: var(--fs-body);
+}
+
+@media (min-width: 640px) {
+  .offerings-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .offerings-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}

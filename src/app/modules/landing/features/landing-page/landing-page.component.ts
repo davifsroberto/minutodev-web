@@ -14,6 +14,7 @@ import { LandingFooterComponent } from '../../components/landing-footer/landing-
 import { LandingHeaderComponent } from '../../components/landing-header/landing-header.component';
 import { LandingHeroComponent } from '../../components/landing-hero/landing-hero.component';
 import { LandingHowItWorksComponent } from '../../components/landing-how-it-works/landing-how-it-works.component';
+import { LandingOfferingsComponent } from '../../components/landing-offerings/landing-offerings.component';
 import { LandingProblemComponent } from '../../components/landing-problem/landing-problem.component';
 import { LandingRadarPreviewComponent } from '../../components/landing-radar-preview/landing-radar-preview.component';
 import { WaitlistFormComponent } from '../../components/waitlist-form/waitlist-form.component';
@@ -28,6 +29,7 @@ import { WaitlistService } from '../../services/waitlist.service';
     LandingHeroComponent,
     LandingProblemComponent,
     LandingHowItWorksComponent,
+    LandingOfferingsComponent,
     LandingRadarPreviewComponent,
     LandingAudienceComponent,
     LandingFinalCtaComponent,

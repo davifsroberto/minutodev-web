@@ -16,7 +16,7 @@ describe('LandingProblemComponent', () => {
     const el = fixture.nativeElement as HTMLElement;
 
     expect(el.querySelector('h2')?.textContent).toContain(
-      'Informação demais, tempo de menos.',
+      'Informação demais. Tempo de menos.',
     );
   });
 

@@ -30,7 +30,7 @@ describe('LandingHeroComponent', () => {
     const secondary = el.querySelector<HTMLAnchorElement>('a.btn--outline');
 
     expect(primary?.getAttribute('href')).toBe('#lista-de-espera');
-    expect(primary?.textContent?.trim()).toBe('Entrar na lista de espera');
+    expect(primary?.textContent?.trim()).toBe('Quero receber o lançamento');
     expect(secondary?.getAttribute('href')).toBe('#radar');
     expect(secondary?.textContent?.trim()).toBe('Ver exemplo do radar');
   });
