@@ -3,9 +3,7 @@
     <div class="section__head">
       <p class="eyebrow">Preview</p>
       <h2 id="radar-title">O Radar de Hoje.</h2>
-      <p class="lead">
-        Veja como é começar o dia já atualizado. Conteúdo ilustrativo.
-      </p>
+      <p class="lead">Veja como é começar o dia já atualizado.</p>
     </div>
 
     <div class="card radar-card">
@@ -18,56 +16,106 @@
 
       <header class="radar-card__head">
         <h3>Radar de Hoje</h3>
-        <span class="badge badge--neutral">
-          <svg
-            class="radar-card__clock"
-            viewBox="0 0 16 16"
-            width="14"
-            height="14"
-            aria-hidden="true"
-            focusable="false"
-          >
-            <circle
-              cx="8"
-              cy="8"
-              r="6.5"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.4"
-            />
-            <path
-              d="M8 4.5V8l2.5 1.5"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.4"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
-          Tempo estimado: {{ estimatedMinutes() }} minutos
-        </span>
+        @if (resolved()) {
+          <span class="badge badge--neutral">
+            <svg
+              class="radar-card__clock"
+              viewBox="0 0 16 16"
+              width="14"
+              height="14"
+              aria-hidden="true"
+              focusable="false"
+            >
+              <circle
+                cx="8"
+                cy="8"
+                r="6.5"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.4"
+              />
+              <path
+                d="M8 4.5V8l2.5 1.5"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.4"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+            Tempo estimado: {{ estimatedMinutes() }} minutos
+          </span>
+        }
       </header>
 
-      <ul class="radar-card__list">
-        @for (item of items(); track item.title) {
-          <li class="radar-item">
-            <span
-              class="badge"
-              [class.badge--success]="item.category === 'trend'"
-              [class.badge--neutral]="item.category !== 'trend'"
-            >
-              {{ item.categoryLabel }}
-            </span>
-            <strong class="radar-item__title">{{ item.title }}</strong>
-            <p class="radar-item__description">{{ item.description }}</p>
-            <span class="radar-item__source">Fonte: {{ item.source }}</span>
-          </li>
+      <div
+        class="radar-card__body"
+        role="status"
+        aria-live="polite"
+        [attr.aria-busy]="loading() ? 'true' : null"
+      >
+        @if (loading()) {
+          <p class="visually-hidden">Carregando o Radar de Hoje…</p>
+          <ul class="radar-card__list" aria-hidden="true">
+            @for (row of skeletonRows; track row) {
+              <li class="radar-item radar-item--skeleton">
+                <span class="skeleton skeleton--badge"></span>
+                <span class="skeleton skeleton--title"></span>
+                <span class="skeleton skeleton--text"></span>
+                <span class="skeleton skeleton--source"></span>
+              </li>
+            }
+          </ul>
+        } @else if (error()) {
+          <div class="radar-state">
+            <p class="radar-state__message">
+              Não foi possível carregar o Radar de Hoje. Verifique sua conexão e
+              tente novamente.
+            </p>
+            <button type="button" class="btn btn--outline" (click)="retry()">
+              Tentar novamente
+            </button>
+          </div>
+        } @else if (empty()) {
+          <div class="radar-state">
+            <p class="radar-state__message">
+              Nenhuma novidade no radar hoje. Volte mais tarde para conferir o
+              próximo briefing.
+            </p>
+          </div>
+        } @else if (resolved()) {
+          <ul class="radar-card__list">
+            @for (item of items(); track item.url) {
+              <li class="radar-item">
+                <a
+                  class="radar-item__link"
+                  [href]="item.url"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <span
+                    class="badge"
+                    [class.badge--success]="item.category === 'trend'"
+                    [class.badge--neutral]="item.category !== 'trend'"
+                  >
+                    {{ item.categoryLabel }}
+                  </span>
+                  <strong class="radar-item__title">{{ item.title }}</strong>
+                  @if (item.description) {
+                    <p class="radar-item__description">
+                      {{ item.description }}
+                    </p>
+                  }
+                  <span class="radar-item__source"
+                    >Fonte: {{ item.source }}</span
+                  >
+                  <span class="visually-hidden">(abre em nova aba)</span>
+                </a>
+              </li>
+            }
+          </ul>
         }
-      </ul>
-
-      <p class="radar-card__note">
-        Conteúdo ilustrativo — o radar real é atualizado diariamente.
-      </p>
+      </div>
     </div>
   </div>
 </section>

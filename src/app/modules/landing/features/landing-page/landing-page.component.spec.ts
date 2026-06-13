@@ -1,25 +1,59 @@
-import { TestBed } from '@angular/core/testing';
+import { provideHttpClient } from '@angular/common/http';
+import {
+  HttpTestingController,
+  provideHttpClientTesting,
+} from '@angular/common/http/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { of } from 'rxjs';
 
+import { RadarBriefing } from '../../models/radar.model';
 import { WaitlistService } from '../../services/waitlist.service';
 import { LandingPageComponent } from './landing-page.component';
 
+const EMPTY_BRIEFING: RadarBriefing = {
+  date: '2026-06-13',
+  estimatedReadTimeMinutes: 0,
+  sections: [],
+};
+
 describe('LandingPageComponent', () => {
   const joinMock = jest.fn().mockReturnValue(of(undefined));
+
+  /**
+   * Create the page, settle the self-fetching radar preview's GET (otherwise
+   * the open request keeps the app unstable and `whenStable()` never resolves).
+   */
+  const createPage = async (): Promise<
+    ComponentFixture<LandingPageComponent>
+  > => {
+    const fixture = TestBed.createComponent(LandingPageComponent);
+    TestBed.tick();
+
+    const httpTesting = TestBed.inject(HttpTestingController);
+    httpTesting
+      .match((req) => req.url.endsWith('/radar/today'))
+      .forEach((req) => req.flush(EMPTY_BRIEFING));
+
+    await fixture.whenStable();
+    return fixture;
+  };
 
   beforeEach(async () => {
     joinMock.mockClear();
 
     await TestBed.configureTestingModule({
       imports: [LandingPageComponent],
-      providers: [{ provide: WaitlistService, useValue: { join: joinMock } }],
+      providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        { provide: WaitlistService, useValue: { join: joinMock } },
+      ],
     }).compileComponents();
   });
 
   it('creates the component and renders the main landmark with key sections', async () => {
-    const fixture = TestBed.createComponent(LandingPageComponent);
-    await fixture.whenStable();
+    const fixture = await createPage();
 
     const el = fixture.nativeElement as HTMLElement;
     expect(fixture.componentInstance).toBeTruthy();
@@ -28,9 +62,21 @@ describe('LandingPageComponent', () => {
     expect(el.querySelector('app-landing-final-cta')).not.toBeNull();
   });
 
+  it('declares the radar preview with no radar inputs and drops the mock data', async () => {
+    const fixture = await createPage();
+
+    const el = fixture.nativeElement as HTMLElement;
+    expect(el.querySelector('app-landing-radar-preview')).not.toBeNull();
+
+    // The self-fetching preview owns its data now — the parent exposes neither
+    // the mock array nor the hardcoded read-time.
+    const instance = fixture.componentInstance as Record<string, unknown>;
+    expect(instance['radarItems']).toBeUndefined();
+    expect(instance['estimatedMinutes']).toBeUndefined();
+  });
+
   it('submits a valid email, calls join() and shows the success message', async () => {
-    const fixture = TestBed.createComponent(LandingPageComponent);
-    await fixture.whenStable();
+    const fixture = await createPage();
 
     const el = fixture.nativeElement as HTMLElement;
     const input = el.querySelector<HTMLInputElement>('input[type=email]');

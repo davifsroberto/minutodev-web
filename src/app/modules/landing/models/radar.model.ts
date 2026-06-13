@@ -68,20 +68,21 @@ export function toRadarItems(briefing: RadarBriefing): RadarItem[] {
 
   const cards: RadarItem[] = [];
 
-  for (const key of DISPLAY_ORDER) {
-    const newest = sectionsByKey.get(key)?.items[0];
-    if (!newest) {
-      continue;
-    }
+  for (const displayOrderKey of DISPLAY_ORDER) {
+    const newest = sectionsByKey.get(displayOrderKey)?.items[0];
 
-    const view = SECTION_VIEW[key];
+    if (!newest) continue;
+
+    const { title, summary, sourceName, url } = newest;
+    const { category, categoryLabel } = SECTION_VIEW[displayOrderKey];
+
     cards.push({
-      category: view.category,
-      categoryLabel: view.categoryLabel,
-      title: newest.title,
-      description: newest.summary,
-      source: newest.sourceName,
-      url: newest.url,
+      category: category,
+      categoryLabel: categoryLabel,
+      title: title,
+      description: summary,
+      source: sourceName,
+      url: url,
     });
   }
 
