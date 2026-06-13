@@ -320,13 +320,13 @@ p {
 }
 
 .section {
-  padding-block: clamp(3rem, 7vw, 6rem);
+  padding-block: clamp(2.5rem, 5vw, 4rem);
   scroll-margin-top: var(--header-height);
 }
 
 .section__head {
   max-width: 42rem;
-  margin-bottom: var(--space-10);
+  margin-bottom: var(--space-8);
 }
 
 .eyebrow {
