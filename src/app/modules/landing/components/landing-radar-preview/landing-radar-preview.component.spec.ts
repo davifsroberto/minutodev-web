@@ -11,6 +11,7 @@ describe('LandingRadarPreviewComponent', () => {
       title: 'Signals chegam ao Angular',
       description: 'O novo modelo de reatividade muda como gerenciamos estado.',
       source: 'angular.dev',
+      url: 'https://angular.dev',
     },
     {
       category: 'tool',
@@ -18,6 +19,7 @@ describe('LandingRadarPreviewComponent', () => {
       title: 'Bun 1.2 acelera testes',
       description: 'O runtime promete builds e testes mais rápidos.',
       source: 'bun.sh',
+      url: 'https://bun.sh',
     },
   ];
 

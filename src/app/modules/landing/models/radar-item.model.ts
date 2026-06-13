@@ -4,6 +4,7 @@ export interface RadarItem {
   category: RadarCategory;
   categoryLabel: string;
   title: string;
-  description: string;
+  description: string | null;
   source: string;
+  url: string;
 }

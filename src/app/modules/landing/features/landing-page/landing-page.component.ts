@@ -55,6 +55,7 @@ export class LandingPageComponent {
       description:
         'Frameworks convergem para signals como modelo padrão de estado reativo no front-end.',
       source: 'Blogs de engenharia',
+      url: 'https://minutodev.com.br',
     },
     {
       category: 'tool',
@@ -63,6 +64,7 @@ export class LandingPageComponent {
       description:
         'Builds mais rápidos e configuração mínima atraem times que buscam produtividade.',
       source: 'GitHub Trending',
+      url: 'https://minutodev.com.br',
     },
     {
       category: 'release',
@@ -71,6 +73,7 @@ export class LandingPageComponent {
       description:
         'Melhorias de performance e novas APIs estáveis para produção.',
       source: 'Release notes',
+      url: 'https://minutodev.com.br',
     },
     {
       category: 'content',
@@ -79,6 +82,7 @@ export class LandingPageComponent {
       description:
         'Um passo a passo direto para elevar a confiabilidade sem desacelerar o time.',
       source: 'Newsletter da comunidade',
+      url: 'https://minutodev.com.br',
     },
   ];
 
