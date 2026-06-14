@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
+import { provideRouter, RouterLink } from '@angular/router';
 
-import { getAllByRole } from '@testing-library/dom';
 import { axe, toHaveNoViolations } from 'jest-axe';
 
 import { RadarTodaySection } from '../../../../models/radar-today.model';
@@ -52,6 +53,7 @@ describe('RadarTodaySectionComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [RadarTodaySectionComponent],
+      providers: [provideRouter([])],
     }).compileComponents();
   });
 
@@ -95,31 +97,31 @@ describe('RadarTodaySectionComponent', () => {
     expect(el.querySelectorAll('.radar-section__summary')).toHaveLength(1);
   });
 
-  it('renders each item as a safe external link to the original URL', () => {
+  it('links each item to its internal content route instead of the external source', () => {
+    const fixture = createComponent();
+    const links = fixture.debugElement.queryAll(By.css('.radar-section__link'));
+
+    expect(links).toHaveLength(2);
+    links.forEach((link, index) => {
+      const routerLink = link.injector.get(RouterLink);
+      const anchor = link.nativeElement as HTMLAnchorElement;
+      const expectedHref = `/app/content/${sectionFixture.items[index].id}`;
+
+      expect(routerLink.href).toBe(expectedHref);
+      expect(anchor.getAttribute('href')).toBe(expectedHref);
+    });
+  });
+
+  it('no longer opens the original source in a new tab from the card', () => {
     const fixture = createComponent();
     const el = fixture.nativeElement as HTMLElement;
     const links = el.querySelectorAll<HTMLAnchorElement>(
       '.radar-section__link',
     );
 
-    expect(links).toHaveLength(2);
-    links.forEach((link, index) => {
-      expect(link.getAttribute('href')).toBe(sectionFixture.items[index].url);
-      expect(link.getAttribute('target')).toBe('_blank');
-      expect(link.getAttribute('rel')).toBe('noopener noreferrer');
-    });
-  });
-
-  it('exposes the visually-hidden new-tab text through each link name', () => {
-    const fixture = createComponent();
-    const el = fixture.nativeElement as HTMLElement;
-    const links = getAllByRole(el, 'link', { name: /abre em nova aba/ });
-
-    expect(links).toHaveLength(2);
     links.forEach((link) => {
-      expect(link.querySelector('.visually-hidden')?.textContent).toBe(
-        '(abre em nova aba)',
-      );
+      expect(link.getAttribute('target')).toBeNull();
+      expect(link.querySelector('.visually-hidden')).toBeNull();
     });
   });
 

@@ -5,6 +5,7 @@ import { RouterTestingHarness } from '@angular/router/testing';
 
 import { axe, toHaveNoViolations } from 'jest-axe';
 
+import { ContentDetailPageComponent } from '../features/content-detail/content-detail-page.component';
 import { RadarTodayPageComponent } from '../features/radar-today/radar-today-page.component';
 import { radarAppRoutes } from '../radar-app.routes';
 import { AppShellComponent } from './app-shell.component';
@@ -105,7 +106,7 @@ describe('AppShellComponent routing', () => {
 });
 
 describe('radarAppRoutes', () => {
-  it('exposes the shell as a parent route with Radar de Hoje as the default child', () => {
+  it('exposes the shell as a parent route with Radar de Hoje and the content detail as children', () => {
     expect(radarAppRoutes).toHaveLength(1);
     expect(radarAppRoutes[0]).toMatchObject({
       path: '',
@@ -113,6 +114,7 @@ describe('radarAppRoutes', () => {
     });
     expect(radarAppRoutes[0]?.children).toEqual([
       { path: '', component: RadarTodayPageComponent },
+      { path: 'content/:id', component: ContentDetailPageComponent },
     ]);
   });
 });

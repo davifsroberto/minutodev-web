@@ -4,6 +4,7 @@ import {
   provideHttpClientTesting,
 } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 
 import { axe, toHaveNoViolations } from 'jest-axe';
 
@@ -135,6 +136,7 @@ describe('RadarTodayPageComponent', () => {
       providers: [
         provideHttpClient(),
         provideHttpClientTesting(),
+        provideRouter([]),
         {
           provide: CLOCK,
           useValue: () => new Date(2026, 5, 13, 9, 0, 0),

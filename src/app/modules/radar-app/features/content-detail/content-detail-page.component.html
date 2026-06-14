@@ -1,0 +1,103 @@
+<section class="content-page">
+  <div class="container content-page__inner">
+    <p class="content-page__back">
+      <a class="content-page__back-link" routerLink="/app">
+        ← Voltar ao Radar
+      </a>
+    </p>
+
+    <div
+      class="content-page__body"
+      role="status"
+      aria-live="polite"
+      [attr.aria-busy]="loading() ? 'true' : null"
+    >
+      @if (loading()) {
+        <p class="visually-hidden">Carregando o conteúdo.</p>
+        <div class="content-skeleton" aria-hidden="true">
+          <span class="skeleton skeleton--title"></span>
+          <span class="skeleton skeleton--line"></span>
+          <span class="skeleton skeleton--line"></span>
+          <span class="skeleton skeleton--line"></span>
+        </div>
+      } @else if (error()) {
+        <div class="content-state content-state--error" tabindex="-1">
+          <p class="content-state__message">
+            Não foi possível carregar este conteúdo.
+          </p>
+          <button type="button" class="btn btn--outline" (click)="retry()">
+            Tentar novamente
+          </button>
+        </div>
+      } @else if (data(); as enrichment) {
+        <article class="content-article">
+          <header class="content-article__header">
+            <p class="eyebrow">Conteúdo</p>
+            <h2 id="content-detail-title">{{ title() }}</h2>
+          </header>
+
+          @if (enrichment.status === 'PENDING') {
+            <p class="content-article__notice">
+              Versão preliminar. Tradução, resumo e curadoria por IA serão
+              adicionados em breve.
+            </p>
+          }
+
+          @if (isEmpty()) {
+            <p class="content-state__message">
+              Ainda não há um resumo disponível para este conteúdo. Consulte a
+              fonte original abaixo.
+            </p>
+          }
+
+          @if (enrichment.shortSummary) {
+            <section class="content-section">
+              <h3 class="content-section__title">Resumo rápido</h3>
+              <p class="content-section__text">{{ enrichment.shortSummary }}</p>
+            </section>
+          }
+
+          @if (enrichment.whyItMatters) {
+            <section class="content-section">
+              <h3 class="content-section__title">Por que importa</h3>
+              <p class="content-section__text">{{ enrichment.whyItMatters }}</p>
+            </section>
+          }
+
+          @if (keyPoints().length) {
+            <section class="content-section">
+              <h3 class="content-section__title">Pontos principais</h3>
+              <ul class="content-section__list">
+                @for (point of keyPoints(); track point) {
+                  <li>{{ point }}</li>
+                }
+              </ul>
+            </section>
+          }
+
+          @if (enrichment.briefContent) {
+            <section class="content-section">
+              <h3 class="content-section__title">Conteúdo rápido</h3>
+              <p class="content-section__text">{{ enrichment.briefContent }}</p>
+            </section>
+          }
+
+          <footer class="content-source">
+            <p class="content-source__label">
+              Conteúdo baseado na fonte original:
+            </p>
+            <a
+              class="content-source__link"
+              [href]="enrichment.originalUrl"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {{ enrichment.originalUrl }}
+              <span class="visually-hidden">(abre em nova aba)</span>
+            </a>
+          </footer>
+        </article>
+      }
+    </div>
+  </div>
+</section>
