@@ -94,6 +94,109 @@
   border-inline-start-color: var(--color-danger);
 }
 
+.content-tldr {
+  display: grid;
+  gap: var(--space-2);
+  padding: var(--space-4) var(--space-5);
+  background-color: var(--color-surface-subtle);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.content-tldr__title {
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-family: var(--font-mono);
+  font-size: var(--fs-small);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.content-tldr__text {
+  margin: 0;
+  font-size: var(--fs-subheading);
+  line-height: var(--lh-body);
+}
+
+.content-insight {
+  display: grid;
+  gap: var(--space-2);
+  padding: var(--space-5);
+  color: var(--color-text);
+  background-color: var(--color-brand-subtle);
+  border: 1px solid var(--color-brand);
+  border-inline-start: 4px solid var(--color-brand);
+  border-radius: var(--radius-md);
+}
+
+.content-insight__title {
+  margin: 0;
+  color: var(--color-brand-dark);
+  font-size: var(--fs-small);
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.content-insight__lead {
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-size: var(--fs-small);
+}
+
+.content-insight__text {
+  margin: 0;
+  font-size: var(--fs-subheading);
+  font-weight: 600;
+  line-height: var(--lh-heading);
+}
+
+.audience {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+  gap: var(--space-4);
+}
+
+.audience__group {
+  display: grid;
+  gap: var(--space-2);
+  align-content: start;
+}
+
+.audience__label {
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-family: var(--font-mono);
+  font-size: var(--fs-small);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.audience__list {
+  display: grid;
+  gap: var(--space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  color: var(--color-text-secondary);
+  line-height: var(--lh-body);
+}
+
+.audience__list li::before {
+  margin-inline-end: var(--space-2);
+  font-weight: 700;
+}
+
+.audience__list--for li::before {
+  content: '✓';
+  color: var(--color-brand);
+}
+
+.audience__list--ignore li::before {
+  content: '–';
+  color: var(--color-text-subtle);
+}
+
 .content-section {
   display: grid;
   gap: var(--space-2);

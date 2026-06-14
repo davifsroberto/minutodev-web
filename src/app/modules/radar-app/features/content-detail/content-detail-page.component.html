@@ -6,31 +6,35 @@
       </a>
     </p>
 
-    <div
-      class="content-page__body"
-      role="status"
-      aria-live="polite"
-      [attr.aria-busy]="loading() ? 'true' : null"
-    >
-      @if (loading()) {
-        <p class="content-loading__message">Gerando versão resumida…</p>
-        <div class="content-skeleton" aria-hidden="true">
-          <span class="skeleton skeleton--title"></span>
-          <span class="skeleton skeleton--line"></span>
-          <span class="skeleton skeleton--line"></span>
-          <span class="skeleton skeleton--line"></span>
-        </div>
-      } @else if (error()) {
-        <div class="content-state content-state--error" tabindex="-1">
-          <p class="content-state__message">
-            Não foi possível carregar este conteúdo.
-          </p>
-          <button type="button" class="btn btn--outline" (click)="retry()">
-            Tentar novamente
-          </button>
-        </div>
-      } @else if (data(); as enrichment) {
-        <article class="content-article">
+    <div class="content-page__body">
+      <div
+        class="content-page__status"
+        role="status"
+        aria-live="polite"
+        [attr.aria-busy]="loading() ? 'true' : null"
+      >
+        @if (loading()) {
+          <p class="content-loading__message">Gerando versão resumida…</p>
+          <div class="content-skeleton" aria-hidden="true">
+            <span class="skeleton skeleton--title"></span>
+            <span class="skeleton skeleton--line"></span>
+            <span class="skeleton skeleton--line"></span>
+            <span class="skeleton skeleton--line"></span>
+          </div>
+        } @else if (error()) {
+          <div class="content-state content-state--error" tabindex="-1">
+            <p class="content-state__message">
+              Não foi possível carregar este conteúdo.
+            </p>
+            <button type="button" class="btn btn--outline" (click)="retry()">
+              Tentar novamente
+            </button>
+          </div>
+        }
+      </div>
+
+      @if (!loading() && !error() && data(); as enrichment) {
+        <article class="content-article" aria-labelledby="content-detail-title">
           <header class="content-hero">
             <div class="content-hero__media">
               <img
@@ -87,6 +91,63 @@
             </p>
           }
 
+          @if (enrichment.summary30s) {
+            <section class="content-tldr" aria-labelledby="content-tldr-title">
+              <h3 id="content-tldr-title" class="content-tldr__title">
+                Resumo em 30 segundos
+              </h3>
+              <p class="content-tldr__text">{{ enrichment.summary30s }}</p>
+            </section>
+          }
+
+          @if (enrichment.keyInsight) {
+            <aside
+              class="content-insight"
+              aria-labelledby="content-insight-title"
+            >
+              <h3 id="content-insight-title" class="content-insight__title">
+                Insight principal
+              </h3>
+              <p class="content-insight__lead">
+                Se você lembrar apenas uma coisa deste artigo:
+              </p>
+              <p class="content-insight__text">{{ enrichment.keyInsight }}</p>
+            </aside>
+          }
+
+          @if (
+            enrichment.audienceFor.length || enrichment.audienceIgnore.length
+          ) {
+            <section class="content-section">
+              <h3 class="content-section__title">Para quem isso importa</h3>
+              <div class="audience">
+                @if (enrichment.audienceFor.length) {
+                  <div class="audience__group">
+                    <p class="audience__label">Importa para</p>
+                    <ul class="audience__list audience__list--for">
+                      @for (profile of enrichment.audienceFor; track profile) {
+                        <li>{{ profile }}</li>
+                      }
+                    </ul>
+                  </div>
+                }
+                @if (enrichment.audienceIgnore.length) {
+                  <div class="audience__group">
+                    <p class="audience__label">Pode ignorar se</p>
+                    <ul class="audience__list audience__list--ignore">
+                      @for (
+                        profile of enrichment.audienceIgnore;
+                        track profile
+                      ) {
+                        <li>{{ profile }}</li>
+                      }
+                    </ul>
+                  </div>
+                }
+              </div>
+            </section>
+          }
+
           @if (enrichment.shortSummary) {
             <section class="content-section">
               <h3 class="content-section__title">O que é</h3>
@@ -126,7 +187,10 @@
             </section>
           }
 
-          @if (enrichment.briefContent) {
+          @if (
+            enrichment.briefContent &&
+            enrichment.briefContent !== enrichment.shortSummary
+          ) {
             <section class="content-section">
               <h3 class="content-section__title">Conteúdo detalhado</h3>
               <p class="content-section__text">{{ enrichment.briefContent }}</p>

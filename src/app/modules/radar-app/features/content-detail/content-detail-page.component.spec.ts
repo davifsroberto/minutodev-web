@@ -25,11 +25,15 @@ function makeEnrichment(
     contentId: 'content-1',
     language: 'pt-BR',
     translatedTitle: 'TypeScript 5.7 lançado',
+    summary30s: null,
     shortSummary: 'A nova versão traz melhorias no compilador.',
     whyItMatters: null,
+    keyInsight: null,
     keyPoints: [],
     example: null,
     whenToUse: null,
+    audienceFor: [],
+    audienceIgnore: [],
     briefContent: 'A nova versão traz melhorias no compilador.',
     originalUrl: 'https://devblogs.microsoft.com/typescript/',
     imageUrl: null,
@@ -112,6 +116,7 @@ describe('ContentDetailPageComponent', () => {
         keyPoints: ['Compilador mais rápido', 'Novos tipos utilitários'],
         example: 'tsc --noEmit ficou 20% mais rápido.',
         whenToUse: 'Vale a pena em monorepos grandes.',
+        briefContent: 'Conteúdo detalhado e distinto do resumo curto.',
       }),
     );
     await harness.fixture.whenStable();
@@ -141,6 +146,44 @@ describe('ContentDetailPageComponent', () => {
     expect(source?.getAttribute('rel')).toBe('noopener noreferrer');
   });
 
+  it('renders the 30s summary, the key insight and the audience lists', async () => {
+    const harness = await navigate();
+    TestBed.tick();
+    httpTesting.expectOne(ENDPOINT).flush(
+      makeEnrichment({
+        summary30s:
+          'Saiu o TS 5.7. Builds mais rápidas. Vale para quem usa TS.',
+        keyInsight: 'O ganho real está no tempo de feedback do compilador.',
+        audienceFor: ['Backend', 'Ferramentas'],
+        audienceIgnore: ['Frontend puro'],
+      }),
+    );
+    await harness.fixture.whenStable();
+    harness.detectChanges();
+
+    const el = rootOf(harness);
+    const text = el.textContent ?? '';
+
+    expect(el.querySelector('.content-tldr')).not.toBeNull();
+    expect(text).toContain('Resumo em 30 segundos');
+    expect(text).toContain('Saiu o TS 5.7.');
+
+    expect(el.querySelector('.content-insight')).not.toBeNull();
+    expect(text).toContain('Insight principal');
+    expect(text).toContain('Se você lembrar apenas uma coisa');
+    expect(text).toContain('O ganho real está no tempo de feedback');
+
+    expect(text).toContain('Para quem isso importa');
+    expect(text).toContain('Importa para');
+    expect(el.querySelector('.audience__list--for')?.textContent).toContain(
+      'Backend',
+    );
+    expect(text).toContain('Pode ignorar se');
+    expect(el.querySelector('.audience__list--ignore')?.textContent).toContain(
+      'Frontend puro',
+    );
+  });
+
   it('renders the hero with the article image, source and reading time', async () => {
     const harness = await navigate();
     TestBed.tick();
@@ -165,7 +208,7 @@ describe('ContentDetailPageComponent', () => {
     expect(text).toMatch(/\d+ min de leitura/);
   });
 
-  it('falls back to the minutoDev placeholder when there is no image', async () => {
+  it('falls back to a branded cover (per source) when there is no image', async () => {
     const harness = await navigate();
     TestBed.tick();
     httpTesting.expectOne(ENDPOINT).flush(makeEnrichment({ imageUrl: null }));
@@ -175,10 +218,13 @@ describe('ContentDetailPageComponent', () => {
     const image = rootOf(harness).querySelector<HTMLImageElement>(
       '.content-hero__image',
     );
-    expect(image?.getAttribute('src')).toBe('/content-placeholder.svg');
+    const src = image?.getAttribute('src') ?? '';
+    expect(src).toContain('data:image/svg+xml');
+    // a capa branded carrega o nome da fonte
+    expect(decodeURIComponent(src)).toContain('TypeScript Blog');
   });
 
-  it('swaps to the placeholder when the article image fails to load', async () => {
+  it('swaps to the branded cover when the article image fails to load', async () => {
     const harness = await navigate();
     TestBed.tick();
     httpTesting
@@ -198,7 +244,7 @@ describe('ContentDetailPageComponent', () => {
       el
         .querySelector<HTMLImageElement>('.content-hero__image')
         ?.getAttribute('src'),
-    ).toBe('/content-placeholder.svg');
+    ).toContain('data:image/svg+xml');
   });
 
   it('shows the error message and a retry action when the request fails', async () => {

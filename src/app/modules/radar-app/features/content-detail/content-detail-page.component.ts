@@ -8,11 +8,9 @@ import {
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 
+import { brandedCoverFor } from '@app/core/content/branded-cover.util';
 import { ContentEnrichment } from '@app/core/content/content-enrichment.model';
 import { ContentEnrichmentService } from '@app/core/content/content-enrichment.service';
-
-/** Imagem padrão do minutoDev quando o conteúdo não tem imagem (ou ela falha). */
-const PLACEHOLDER_IMAGE = '/content-placeholder.svg';
 
 /** Velocidade média de leitura para estimar o tempo do briefing. */
 const WORDS_PER_MINUTE = 200;
@@ -52,9 +50,14 @@ export class ContentDetailPageComponent {
   readonly keyPoints = computed(() => this.data()?.keyPoints ?? []);
 
   readonly heroImage = computed(() => {
-    const url = this.data()?.imageUrl ?? null;
+    const data = this.data();
+    if (data === undefined) return '';
 
-    return url && url !== this.brokenImageUrl() ? url : PLACEHOLDER_IMAGE;
+    const url = data.imageUrl;
+
+    return url && url !== this.brokenImageUrl()
+      ? url
+      : brandedCoverFor(data.sourceName);
   });
 
   readonly readingTimeMinutes = computed(() => {
@@ -62,12 +65,16 @@ export class ContentDetailPageComponent {
     if (data === undefined) return 0;
 
     const text = [
+      data.summary30s,
       data.shortSummary,
       data.whyItMatters,
+      data.keyInsight,
       data.example,
       data.whenToUse,
       data.briefContent,
       ...data.keyPoints,
+      ...data.audienceFor,
+      ...data.audienceIgnore,
     ]
       .filter((part): part is string => Boolean(part))
       .join(' ')
@@ -100,12 +107,16 @@ export class ContentDetailPageComponent {
     if (data === undefined) return false;
 
     return (
+      !data.summary30s &&
       !data.shortSummary &&
       !data.briefContent &&
       !data.whyItMatters &&
+      !data.keyInsight &&
       !data.example &&
       !data.whenToUse &&
-      data.keyPoints.length === 0
+      data.keyPoints.length === 0 &&
+      data.audienceFor.length === 0 &&
+      data.audienceIgnore.length === 0
     );
   });
 

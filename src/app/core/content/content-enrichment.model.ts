@@ -9,11 +9,15 @@ export interface ContentEnrichment {
   contentId: string;
   language: string;
   translatedTitle: string | null;
+  summary30s: string | null;
   shortSummary: string | null;
   whyItMatters: string | null;
+  keyInsight: string | null;
   keyPoints: string[];
   example: string | null;
   whenToUse: string | null;
+  audienceFor: string[];
+  audienceIgnore: string[];
   briefContent: string | null;
   originalUrl: string;
   imageUrl: string | null;
