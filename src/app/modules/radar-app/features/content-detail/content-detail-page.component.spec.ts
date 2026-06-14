@@ -87,11 +87,13 @@ describe('ContentDetailPageComponent', () => {
     req.flush(makeEnrichment());
   });
 
-  it('shows the loading skeleton before the enrichment resolves', async () => {
+  it('shows the "Gerando versão resumida" loading state before the enrichment resolves', async () => {
     const harness = await navigate();
     TestBed.tick();
 
-    expect(rootOf(harness).querySelector('.content-skeleton')).not.toBeNull();
+    const el = rootOf(harness);
+    expect(el.querySelector('.content-skeleton')).not.toBeNull();
+    expect(el.textContent ?? '').toContain('Gerando versão resumida');
 
     httpTesting.expectOne(ENDPOINT).flush(makeEnrichment());
   });
@@ -166,6 +168,44 @@ describe('ContentDetailPageComponent', () => {
 
     expect(text).toContain('Versão preliminar');
     expect(text).toContain('Ainda não há um resumo disponível');
+    expect(el.querySelector('.content-source__link')).not.toBeNull();
+  });
+
+  it('shows the failure notice but keeps the fallback content and source link when status is FAILED', async () => {
+    const harness = await navigate();
+    TestBed.tick();
+    httpTesting.expectOne(ENDPOINT).flush(
+      makeEnrichment({
+        status: 'FAILED',
+        errorMessage:
+          'Não foi possível gerar a versão resumida com IA no momento. Tente novamente mais tarde.',
+      }),
+    );
+    await harness.fixture.whenStable();
+    harness.detectChanges();
+
+    const el = rootOf(harness);
+    const text = el.textContent ?? '';
+
+    expect(el.querySelector('.content-article__notice--error')).not.toBeNull();
+    expect(text).toContain('Não foi possível gerar a versão resumida com IA');
+    // o conteúdo de fallback (resumo original) e a fonte continuam visíveis
+    expect(text).toContain('A nova versão traz melhorias no compilador.');
+    expect(el.querySelector('.content-source__link')).not.toBeNull();
+  });
+
+  it('shows the in-progress notice while status is PROCESSING', async () => {
+    const harness = await navigate();
+    TestBed.tick();
+    httpTesting
+      .expectOne(ENDPOINT)
+      .flush(makeEnrichment({ status: 'PROCESSING' }));
+    await harness.fixture.whenStable();
+    harness.detectChanges();
+
+    const el = rootOf(harness);
+
+    expect(el.textContent ?? '').toContain('Gerando a versão resumida com IA');
     expect(el.querySelector('.content-source__link')).not.toBeNull();
   });
 

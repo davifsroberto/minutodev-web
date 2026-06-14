@@ -13,7 +13,7 @@
       [attr.aria-busy]="loading() ? 'true' : null"
     >
       @if (loading()) {
-        <p class="visually-hidden">Carregando o conteúdo.</p>
+        <p class="content-loading__message">Gerando versão resumida…</p>
         <div class="content-skeleton" aria-hidden="true">
           <span class="skeleton skeleton--title"></span>
           <span class="skeleton skeleton--line"></span>
@@ -40,6 +40,20 @@
             <p class="content-article__notice">
               Versão preliminar. Tradução, resumo e curadoria por IA serão
               adicionados em breve.
+            </p>
+          }
+
+          @if (enrichment.status === 'PROCESSING') {
+            <p class="content-article__notice">
+              Gerando a versão resumida com IA. Recarregue em instantes para ver
+              o resultado.
+            </p>
+          }
+
+          @if (enrichment.status === 'FAILED') {
+            <p class="content-article__notice content-article__notice--error">
+              Não foi possível gerar a versão resumida com IA agora. Mostrando o
+              conteúdo original; tente novamente mais tarde.
             </p>
           }
 

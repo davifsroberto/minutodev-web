@@ -60,6 +60,10 @@
   font-size: var(--fs-small);
 }
 
+.content-article__notice--error {
+  border-inline-start-color: var(--color-danger);
+}
+
 .content-section {
   display: grid;
   gap: var(--space-2);
@@ -132,6 +136,12 @@
 
 .content-state--error .content-state__message {
   color: var(--color-danger);
+}
+
+.content-loading__message {
+  margin: 0 0 var(--space-4);
+  color: var(--color-text-secondary);
+  font-size: var(--fs-small);
 }
 
 .content-skeleton {
