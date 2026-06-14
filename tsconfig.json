@@ -12,6 +12,7 @@
     "target": "ES2022",
     "module": "preserve",
     "paths": {
+      "@app/*": ["./src/app/*"],
       "@environments/*": ["./src/environments/*"]
     }
   },

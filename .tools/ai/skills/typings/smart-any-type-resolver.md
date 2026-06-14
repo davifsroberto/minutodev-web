@@ -174,7 +174,7 @@ billing
 class CreateInvoiceService {
   async execute(data: any): Promise<any> {
     return {
-      id: "1",
+      id: '1',
       total: 100,
     };
   }

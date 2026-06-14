@@ -1,7 +1,7 @@
 ---
 name: any-contract-tests
-description: "Generate Jest unit tests that validate and protect runtime contracts extracted from weakly typed objects in Angular/TypeScript applications."
-argument-hint: "path/to/file.ts"
+description: 'Generate Jest unit tests that validate and protect runtime contracts extracted from weakly typed objects in Angular/TypeScript applications.'
+argument-hint: 'path/to/file.ts'
 user-invocable: true
 ---
 
@@ -395,16 +395,16 @@ Generate tests validating valid runtime structures.
 Example:
 
 ```ts
-it("should return uppercase profile name", async () => {
+it('should return uppercase profile name', async () => {
   const user = {
     profile: {
-      name: "john",
+      name: 'john',
     },
   };
 
   const result = await service.execute(user);
 
-  expect(result).toBe("JOHN");
+  expect(result).toBe('JOHN');
 });
 ```
 
@@ -417,7 +417,7 @@ Generate tests validating invalid or incomplete runtime structures.
 Example:
 
 ```ts
-it("should throw when profile name is missing", async () => {
+it('should throw when profile name is missing', async () => {
   const user = {
     profile: {},
   };

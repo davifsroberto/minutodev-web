@@ -1,0 +1,147 @@
+:host {
+  display: block;
+}
+
+.radar-page {
+  padding-block: clamp(2rem, 5vw, 4rem);
+}
+
+.radar-page__inner {
+  display: grid;
+  gap: var(--space-8);
+  max-width: 56rem;
+}
+
+.radar-page__header {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.radar-page__header h2 {
+  margin: 0;
+  font-size: var(--fs-section);
+  letter-spacing: 0;
+}
+
+.radar-page__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin: 0;
+}
+
+.radar-page__meta-item {
+  display: grid;
+  gap: var(--space-1);
+  min-width: min(100%, 12rem);
+  padding: var(--space-3) var(--space-4);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-micro);
+}
+
+.radar-page__meta dt {
+  color: var(--color-text-secondary);
+  font-family: var(--font-mono);
+  font-size: var(--fs-small);
+}
+
+.radar-page__meta dd {
+  margin: 0;
+  color: var(--color-text);
+  font-weight: 600;
+}
+
+.radar-page__body {
+  min-height: 18rem;
+}
+
+.radar-page__sections {
+  display: grid;
+  gap: var(--space-8);
+}
+
+.radar-page__skeleton {
+  display: grid;
+  gap: var(--space-8);
+}
+
+.radar-skeleton-section {
+  display: grid;
+  gap: var(--space-5);
+}
+
+.radar-skeleton-section__items {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.skeleton {
+  display: block;
+  height: 0.75rem;
+  background-color: var(--color-surface-subtle);
+  border-radius: var(--radius-sm);
+  animation: radar-skeleton-pulse 1.4s ease-in-out infinite;
+}
+
+.skeleton--heading {
+  width: 12rem;
+  height: 1.75rem;
+}
+
+.skeleton--item-title {
+  width: min(100%, 34rem);
+  height: 1rem;
+  margin-top: var(--space-2);
+}
+
+.skeleton--item-summary {
+  width: min(100%, 46rem);
+}
+
+.skeleton--item-source {
+  width: 9rem;
+}
+
+.radar-state {
+  display: grid;
+  gap: var(--space-4);
+  justify-items: start;
+  padding: var(--space-6);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-micro);
+}
+
+.radar-state:focus {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 2px;
+}
+
+.radar-state__message {
+  margin: 0;
+  color: var(--color-text-secondary);
+}
+
+.radar-state--error .radar-state__message {
+  color: var(--color-danger);
+}
+
+@keyframes radar-skeleton-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.45;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton {
+    animation: none;
+  }
+}

@@ -4,12 +4,13 @@ import {
   computed,
   signal,
 } from '@angular/core';
+import { RouterLink } from '@angular/router';
 
 import { ThemeToggleComponent } from '../../../../core/theme/theme-toggle.component';
 
 @Component({
   selector: 'app-landing-header',
-  imports: [ThemeToggleComponent],
+  imports: [RouterLink, ThemeToggleComponent],
   templateUrl: './landing-header.component.html',
   styleUrl: './landing-header.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

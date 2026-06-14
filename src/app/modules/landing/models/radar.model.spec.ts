@@ -3,8 +3,8 @@ import {
   RadarBriefing,
   RadarSection,
   RadarSectionKey,
-  toRadarItems,
-} from './radar.model';
+} from '@app/core/radar/radar.model';
+import { toRadarItems } from './radar.model';
 
 function makeItem(overrides: Partial<RadarApiItem> = {}): RadarApiItem {
   return {

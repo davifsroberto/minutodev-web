@@ -1,7 +1,7 @@
 ---
 name: module-folder-structure
-description: "Mandatory folder structure for feature modules following Angular best practices and project conventions."
-applies-to: ["new-modules", "module-refactoring", "code-organization"]
+description: 'Mandatory folder structure for feature modules following Angular best practices and project conventions.'
+applies-to: ['new-modules', 'module-refactoring', 'code-organization']
 ---
 
 # Rule: Module Folder Structure
@@ -66,6 +66,7 @@ Every feature module must follow this hierarchical structure:
 ### Root Level Files
 
 **Required:**
+
 - `<module-name>.module.ts` — Main module definition with declarations, imports, exports
 - `<module-name>.routes.ts` — Lazy-loaded routes (required if the module is lazy-loaded)
 
@@ -76,6 +77,7 @@ Every feature module must follow this hierarchical structure:
 **Purpose:** Reusable UI components without business logic.
 
 **Rules:**
+
 - Each component must have its own subfolder: `<component>/`
 - File set: `<component>.component.ts`, `.component.html`, `.component.scss`, `.component.spec.ts`
 - Components receive data via `@Input()` and emit actions via `@Output()`
@@ -84,6 +86,7 @@ Every feature module must follow this hierarchical structure:
 - Use SCSS for new components; preserve LESS only in existing legacy code
 
 **Example structure (generic):**
+
 ```
 components/
 ├── <component-a>/
@@ -102,6 +105,7 @@ components/
 **Purpose:** Components with business logic, state management, and service integration.
 
 **Rules:**
+
 - Each feature must have its own subfolder: `<feature>/`
 - File set: `<feature>.component.ts`, `.component.html`, `.component.scss`, `.component.spec.ts`
 - Sub-components live in a `components/` subfolder within the feature; when there are many, group them by domain (e.g. `components/<group>/<sub-component>/`)
@@ -112,6 +116,7 @@ components/
 - Must include a `.spec.ts` test file
 
 **Example structure (generic):**
+
 ```
 features/
 ├── <feature>/
@@ -134,6 +139,7 @@ features/
 **Purpose:** Reusable, pure transformation and helper functions.
 
 **Rules:**
+
 - File naming: `<name>.helper.ts`, `<name>.helper.spec.ts`
 - No dependencies on services or components
 - Pure functions that transform data
@@ -146,10 +152,11 @@ features/
 **Purpose:** Centralized type definitions for the module.
 
 **Rules:**
+
 - File naming: **kebab-case** + `.model.ts` (e.g. `<name>.model.ts`, `<another-name>.model.ts`)
 - No logic, only type definitions
 - Use `interface` for contracts, `type` for unions/aliases
-- **Preserve PascalCase for API field names inside the model** (`Id`, `Name`, `RoomRates`, `DerivedBarId`) — this applies to the *properties*, not the file name
+- **Preserve PascalCase for API field names inside the model** (`Id`, `Name`, `RoomRates`, `DerivedBarId`) — this applies to the _properties_, not the file name
 - Export directly, no barrel files needed
 - Models do not require a `.spec.ts` when they are pure type definitions
 
@@ -160,6 +167,7 @@ features/
 **Purpose:** Data access, API communication, and business logic orchestration.
 
 **Rules:**
+
 - File naming: `<name>.service.ts`, `<name>.service.spec.ts`
 - Services handle HTTP calls, data transformation, and state management
 - Prefer Observable/RxJS over Promise/async-await
@@ -173,6 +181,7 @@ features/
 **Purpose:** Specialized form validation logic tied to a single feature.
 
 **Rules:**
+
 - Place the file **inside the feature folder** it serves: `features/<feature>/<feature>.validators.ts`
 - A separate top-level `/validators` folder is **not** used in this project
 - A `.spec.ts` is recommended but not mandatory for validators
@@ -182,6 +191,7 @@ features/
 ## Naming Conventions
 
 ### Component Files
+
 ```
 <kebab-case-name>.component.ts
 <kebab-case-name>.component.html
@@ -190,28 +200,33 @@ features/
 ```
 
 ### Service Files
+
 ```
 <kebab-case-name>.service.ts
 <kebab-case-name>.service.spec.ts
 ```
 
 ### Helper Files
+
 ```
 <kebab-case-name>.helper.ts
 <kebab-case-name>.helper.spec.ts
 ```
 
 ### Model Files
+
 ```
 <kebab-case-name>.model.ts
 ```
 
 ### Routes File
+
 ```
 <module-name>.routes.ts   # exports a `Routes` const named <camelCaseModule>Routes
 ```
 
 ### Class Names
+
 ```
 PascalCaseNameComponent
 PascalCaseNameService
@@ -219,6 +234,7 @@ PascalCaseNameHelper
 ```
 
 ### Selector Names
+
 ```
 app-<kebab-case-name>
 ```
@@ -230,6 +246,7 @@ app-<kebab-case-name>
 **Rule:** Every `.ts` file containing logic must have a corresponding `.spec.ts` file in the same directory.
 
 **Exceptions (no spec required):**
+
 - Model/interface files (`*.model.ts`) — pure type definitions
 - Module definition files (`*.module.ts`) — unless they contain logic
 - Routes files (`*.routes.ts`) — pure route configuration
@@ -240,11 +257,13 @@ app-<kebab-case-name>
 ## Import Conventions
 
 **Rules:**
+
 - Use relative imports within the same module
 - Use `src/app/...` or mapped aliases (`@app`, `@shared`) for cross-module imports
 - Follow the pattern of the file/feature being edited
 
 **Example (generic):**
+
 ```ts
 // Within a feature
 import { <Name>Service } from '../../../services/<name>.service';

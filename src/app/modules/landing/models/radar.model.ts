@@ -1,32 +1,9 @@
+import {
+  RadarBriefing,
+  RadarSection,
+  RadarSectionKey,
+} from '@app/core/radar/radar.model';
 import { RadarCategory, RadarItem } from './radar-item.model';
-
-/**
- * API wire contract — mirrors `GET /radar/today` JSON exactly (camelCase).
- * See TechSpec "Core Interfaces". Do not add view concerns here.
- */
-export type RadarSectionKey = 'releases' | 'tools' | 'trends' | 'recommended';
-
-export interface RadarApiItem {
-  id: string;
-  title: string;
-  summary: string | null;
-  url: string;
-  sourceName: string;
-  category: string | null;
-  contentType: 'ARTICLE' | 'RELEASE' | 'TOOL' | 'DISCUSSION' | 'REPOSITORY';
-  publishedAt: string | null;
-}
-
-export interface RadarSection {
-  key: RadarSectionKey;
-  items: RadarApiItem[];
-}
-
-export interface RadarBriefing {
-  date: string;
-  sections: RadarSection[];
-  estimatedReadTimeMinutes: number;
-}
 
 /**
  * Fixed display order for the landing cards (ADR-002 / TechSpec "Data Models").

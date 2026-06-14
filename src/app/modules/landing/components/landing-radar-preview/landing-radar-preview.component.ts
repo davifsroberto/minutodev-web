@@ -5,9 +5,9 @@ import {
   inject,
 } from '@angular/core';
 
+import { RadarService } from '@app/core/radar/radar.service';
 import { toRadarItems } from '../../models/radar.model';
 import { RadarItem } from '../../models/radar-item.model';
-import { RadarService } from '../../services/radar.service';
 
 @Component({
   selector: 'app-landing-radar-preview',

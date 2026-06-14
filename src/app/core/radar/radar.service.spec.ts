@@ -7,9 +7,9 @@ import { ApplicationRef } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 
 import { environment } from '@environments/environment';
-import { CLOCK } from '../../../core/time/clock';
-import { LocalDateUtil } from '../../../core/time/local-date.util';
-import { RadarBriefing } from '../models/radar.model';
+import { CLOCK } from '@app/core/time/clock';
+import { LocalDateUtil } from '@app/core/time/local-date.util';
+import { RadarBriefing } from './radar.model';
 import { RadarService } from './radar.service';
 
 const BASE = `${environment.apiBaseUrl}/radar/today`;

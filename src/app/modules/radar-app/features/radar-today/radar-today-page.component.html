@@ -1,0 +1,70 @@
+<section class="radar-page" aria-labelledby="radar-today-title">
+  <div class="container radar-page__inner">
+    <header class="radar-page__header">
+      <p class="eyebrow">Radar de Hoje</p>
+      <h2 id="radar-today-title">Briefing diário</h2>
+
+      @if (briefing(); as briefing) {
+        <dl class="radar-page__meta" aria-label="Resumo do Radar de Hoje">
+          <div class="radar-page__meta-item">
+            <dt>Data</dt>
+            <dd>{{ briefing.date }}</dd>
+          </div>
+          <div class="radar-page__meta-item">
+            <dt>Tempo</dt>
+            <dd>
+              Tempo estimado: {{ briefing.estimatedReadTimeMinutes }} minutos
+            </dd>
+          </div>
+        </dl>
+      }
+    </header>
+
+    <div
+      class="radar-page__body"
+      role="status"
+      aria-live="polite"
+      [attr.aria-busy]="loading() ? 'true' : null"
+    >
+      @if (loading()) {
+        <p class="visually-hidden">Carregando o Radar de Hoje.</p>
+        <div class="radar-page__skeleton" aria-hidden="true">
+          @for (section of skeletonSections; track section) {
+            <section class="radar-skeleton-section">
+              <span class="skeleton skeleton--heading"></span>
+              <div class="radar-skeleton-section__items">
+                @for (item of skeletonItems; track item) {
+                  <span class="skeleton skeleton--item-title"></span>
+                  <span class="skeleton skeleton--item-summary"></span>
+                  <span class="skeleton skeleton--item-source"></span>
+                }
+              </div>
+            </section>
+          }
+        </div>
+      } @else if (error()) {
+        <div class="radar-state radar-state--error" tabindex="-1">
+          <p class="radar-state__message">
+            Não foi possível carregar o Radar de Hoje. Tente novamente mais
+            tarde.
+          </p>
+          <button type="button" class="btn btn--outline" (click)="retry()">
+            Tentar novamente
+          </button>
+        </div>
+      } @else if (empty()) {
+        <div class="radar-state" tabindex="-1">
+          <p class="radar-state__message">
+            Nenhum conteúdo encontrado para este dia.
+          </p>
+        </div>
+      } @else if (resolved()) {
+        <div class="radar-page__sections">
+          @for (section of sections(); track section.key) {
+            <app-radar-today-section [section]="section" />
+          }
+        </div>
+      }
+    </div>
+  </div>
+</section>

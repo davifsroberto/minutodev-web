@@ -8,7 +8,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { axe, toHaveNoViolations } from 'jest-axe';
 
 import { environment } from '@environments/environment';
-import { RadarBriefing } from '../../models/radar.model';
+import { RadarBriefing } from '@app/core/radar/radar.model';
 import { LandingRadarPreviewComponent } from './landing-radar-preview.component';
 
 expect.extend(toHaveNoViolations);

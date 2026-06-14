@@ -1,0 +1,30 @@
+<section
+  class="radar-section"
+  [attr.aria-labelledby]="'radar-section-' + section().key"
+>
+  <h2 class="radar-section__title" [id]="'radar-section-' + section().key">
+    {{ section().label }}
+  </h2>
+
+  <ul class="radar-section__list">
+    @for (item of section().items; track item.id) {
+      <li class="radar-section__item">
+        <a
+          class="radar-section__link"
+          [href]="item.url"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <strong class="radar-section__item-title">{{ item.title }}</strong>
+          @if (item.summary !== null) {
+            <p class="radar-section__summary">{{ item.summary }}</p>
+          }
+          <span class="radar-section__source"
+            >Fonte: {{ item.sourceName }}</span
+          >
+          <span class="visually-hidden">(abre em nova aba)</span>
+        </a>
+      </li>
+    }
+  </ul>
+</section>

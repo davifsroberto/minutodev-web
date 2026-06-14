@@ -4,10 +4,11 @@ import {
   provideHttpClientTesting,
 } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 
 import { of } from 'rxjs';
 
-import { RadarBriefing } from '../../models/radar.model';
+import { RadarBriefing } from '@app/core/radar/radar.model';
 import { WaitlistService } from '../../services/waitlist.service';
 import { LandingPageComponent } from './landing-page.component';
 
@@ -47,6 +48,7 @@ describe('LandingPageComponent', () => {
       providers: [
         provideHttpClient(),
         provideHttpClientTesting(),
+        provideRouter([]),
         { provide: WaitlistService, useValue: { join: joinMock } },
       ],
     }).compileComponents();

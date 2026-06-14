@@ -1,12 +1,12 @@
 ---
 name: jest-unit-tests
-description: "Mandatory conventions for Jest unit tests across the project: structure, mocking patterns, coverage and quality standards."
-applies-to: ["new-tests", "test-refactoring", "spec-files"]
+description: 'Mandatory conventions for Jest unit tests across the project: structure, mocking patterns, coverage and quality standards.'
+applies-to: ['new-tests', 'test-refactoring', 'spec-files']
 ---
 
 # Rule: Jest Unit Tests
 
-Conventions that **every** Jest unit test in the project must follow. This is a rule (mandatory conventions), not a generator. To *generate* tests that protect runtime contracts of weakly typed code, use the **`any-contract-tests`** skill (`.tools/ai/skills/tests/any-contract-tests.md`) — it follows these same conventions.
+Conventions that **every** Jest unit test in the project must follow. This is a rule (mandatory conventions), not a generator. To _generate_ tests that protect runtime contracts of weakly typed code, use the **`any-contract-tests`** skill (`.tools/ai/skills/tests/any-contract-tests.md`) — it follows these same conventions.
 
 ## Test Stack
 
@@ -32,6 +32,7 @@ describe('TariffPriceHelper', () => {
 ## What to Test
 
 For any logic, cover:
+
 - happy path
 - empty values
 - `null` / `undefined`
@@ -50,6 +51,7 @@ For business rules specifically, the happy/empty/null-undefined/error matrix is 
 ## Quality Standards
 
 Every test MUST:
+
 - validate **real behavior**, not just execution
 - maintain isolation; no shared mutable state between tests
 - avoid redundant tests and meaningless assertions
@@ -64,6 +66,7 @@ Every test MUST:
 ## Production Code Protection
 
 Unit tests MUST NOT drive changes to production code. When adding/extending tests:
+
 - only create or extend `.spec.ts` files, test helpers and fixtures
 - never weaken typings, add defensive runtime guards, or alter public APIs just to make a test pass
 
