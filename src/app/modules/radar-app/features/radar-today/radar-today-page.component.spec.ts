@@ -102,6 +102,14 @@ function fullBriefing(): RadarBriefing {
   };
 }
 
+function fallbackBriefing(): RadarBriefing {
+  return {
+    ...fullBriefing(),
+    date: '2026-06-10',
+    estimatedReadTimeMinutes: 8,
+  };
+}
+
 function emptyBriefing(): RadarBriefing {
   return {
     date: '2026-06-13',
@@ -204,6 +212,68 @@ describe('RadarTodayPageComponent', () => {
       const fixture = TestBed.createComponent(RadarTodayPageComponent);
       TestBed.tick();
       httpTesting.expectOne(matchRadar).flush(fullBriefing());
+      await settle(fixture);
+
+      await expectNoAxeViolations(fixture.nativeElement as HTMLElement);
+    });
+  });
+
+  describe('fallback state (most recent available radar)', () => {
+    it('does not flag fallback when the resolved date matches today', async () => {
+      const fixture = TestBed.createComponent(RadarTodayPageComponent);
+      TestBed.tick();
+      httpTesting.expectOne(matchRadar).flush(fullBriefing());
+      await settle(fixture);
+
+      const component = fixture.componentInstance;
+      expect(component.isFallback()).toBe(false);
+      expect(component.eyebrow()).toBe('Radar de Hoje');
+
+      const el = fixture.nativeElement as HTMLElement;
+      expect(el.querySelector('.radar-page__fallback-notice')).toBeNull();
+    });
+
+    it('flags fallback and shows the real date when the resolved date is earlier than today', async () => {
+      const fixture = TestBed.createComponent(RadarTodayPageComponent);
+      TestBed.tick();
+      httpTesting.expectOne(matchRadar).flush(fallbackBriefing());
+      await settle(fixture);
+
+      const component = fixture.componentInstance;
+      expect(component.isFallback()).toBe(true);
+      expect(component.resolved()).toBe(true);
+      expect(component.empty()).toBe(false);
+      expect(component.eyebrow()).toBe('Último briefing disponível');
+
+      const el = fixture.nativeElement as HTMLElement;
+      expect(el.querySelector('.eyebrow')?.textContent?.trim()).toBe(
+        'Último briefing disponível',
+      );
+      expect(el.textContent).toContain('2026-06-10');
+      expect(el.textContent).toContain('Tempo estimado: 8 minutos');
+      expect(
+        el.querySelectorAll('app-radar-today-section').length,
+      ).toBeGreaterThan(0);
+    });
+
+    it('renders the discreet notice explaining the displayed radar is not from today', async () => {
+      const fixture = TestBed.createComponent(RadarTodayPageComponent);
+      TestBed.tick();
+      httpTesting.expectOne(matchRadar).flush(fallbackBriefing());
+      await settle(fixture);
+
+      const el = fixture.nativeElement as HTMLElement;
+      expect(
+        el.querySelector('.radar-page__fallback-notice')?.textContent?.trim(),
+      ).toBe(
+        'Nenhum conteúdo encontrado para hoje. Exibindo o radar mais recente disponível.',
+      );
+    });
+
+    it('passes AXE in the fallback state', async () => {
+      const fixture = TestBed.createComponent(RadarTodayPageComponent);
+      TestBed.tick();
+      httpTesting.expectOne(matchRadar).flush(fallbackBriefing());
       await settle(fixture);
 
       await expectNoAxeViolations(fixture.nativeElement as HTMLElement);

@@ -1,7 +1,7 @@
 <section class="radar-page" aria-labelledby="radar-today-title">
   <div class="container radar-page__inner">
     <header class="radar-page__header">
-      <p class="eyebrow">Radar de Hoje</p>
+      <p class="eyebrow">{{ eyebrow() }}</p>
       <h2 id="radar-today-title">Briefing diário</h2>
 
       @if (briefing(); as briefing) {
@@ -59,6 +59,12 @@
           </p>
         </div>
       } @else if (resolved()) {
+        @if (isFallback()) {
+          <p class="radar-page__fallback-notice">
+            Nenhum conteúdo encontrado para hoje. Exibindo o radar mais recente
+            disponível.
+          </p>
+        }
         <div class="radar-page__sections">
           @for (section of sections(); track section.key) {
             <app-radar-today-section [section]="section" />

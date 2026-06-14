@@ -44,10 +44,10 @@ export class LandingRadarPreviewComponent {
       !this.loading() &&
       !this.error() &&
       this.briefing() !== undefined &&
-      this.items().length === 0,
+      !this.items().length,
   );
 
-  readonly resolved = computed(() => this.items().length > 0);
+  readonly resolved = computed(() => !!this.items().length);
 
   protected retry(): void {
     this.radar.today.reload();

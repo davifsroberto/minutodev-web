@@ -51,7 +51,7 @@ export function toRadarTodaySections(
       [];
     const cappedItems = items.slice(0, cap).map(toRadarTodayItem);
 
-    if (cappedItems.length === 0) continue;
+    if (!cappedItems.length) continue;
 
     sections.push({
       key: sectionKey,
