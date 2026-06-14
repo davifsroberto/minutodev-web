@@ -3,13 +3,13 @@
 }
 
 .content-page {
-  padding-block: clamp(2rem, 5vw, 4rem);
+  padding-block: clamp(2rem, 2.5vw, 4rem);
 }
 
 .content-page__inner {
   display: grid;
   gap: var(--space-6);
-  max-width: 48rem;
+  max-width: 58rem;
 }
 
 .content-page__back {
@@ -51,7 +51,7 @@
 
 .content-hero__media {
   margin-bottom: var(--space-2);
-  aspect-ratio: 16 / 9;
+  aspect-ratio: 20 / 8;
   overflow: hidden;
   background-color: var(--color-surface-subtle);
   border: 1px solid var(--color-border);
