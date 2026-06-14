@@ -131,6 +131,13 @@ describe('RadarTodayPageComponent', () => {
     fixture.whenStable();
 
   beforeEach(async () => {
+    // Evita que o cooldown do warm (sessionStorage) vaze entre os testes.
+    try {
+      sessionStorage.clear();
+    } catch {
+      /* sem storage neste ambiente */
+    }
+
     await TestBed.configureTestingModule({
       imports: [RadarTodayPageComponent],
       providers: [
@@ -226,6 +233,20 @@ describe('RadarTodayPageComponent', () => {
       await settle(fixture);
 
       await expectNoAxeViolations(fixture.nativeElement as HTMLElement);
+    });
+
+    it('warms the highlight enrichment so its pt-BR translation gets generated', async () => {
+      const fixture = TestBed.createComponent(RadarTodayPageComponent);
+      TestBed.tick();
+      httpTesting.expectOne(matchRadar).flush(fullBriefing());
+      await settle(fixture);
+
+      // o destaque é o item mais recente da 1ª seção (trend-1)
+      const warm = httpTesting.expectOne(
+        `${environment.apiBaseUrl}/contents/trend-1/enrichment`,
+      );
+      expect(warm.request.method).toBe('GET');
+      warm.flush({});
     });
   });
 

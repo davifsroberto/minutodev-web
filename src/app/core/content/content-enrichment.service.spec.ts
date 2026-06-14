@@ -56,6 +56,13 @@ describe('ContentEnrichmentService', () => {
     TestBed.runInInjectionContext(() => service.loadById(id));
 
   beforeEach(() => {
+    // sessionStorage é global no jsdom; limpa o cooldown de warm entre testes.
+    try {
+      sessionStorage.clear();
+    } catch {
+      /* sem storage neste ambiente */
+    }
+
     TestBed.configureTestingModule({
       providers: [provideHttpClient(), provideHttpClientTesting()],
     });
@@ -129,5 +136,58 @@ describe('ContentEnrichmentService', () => {
 
     expect(resource.error()).toBeTruthy();
     expect(resource.status()).not.toBe('resolved');
+  });
+
+  describe('warm', () => {
+    it('issues a fire-and-forget GET to trigger on-demand generation', () => {
+      service.warm('content-1');
+
+      const req = httpTesting.expectOne(`${BASE}/content-1/enrichment`);
+      expect(req.request.method).toBe('GET');
+      req.flush(makeEnrichment());
+    });
+
+    it('is idempotent per id within the session', () => {
+      service.warm('content-1');
+      httpTesting
+        .expectOne(`${BASE}/content-1/enrichment`)
+        .flush(makeEnrichment());
+
+      service.warm('content-1');
+      httpTesting.expectNone(`${BASE}/content-1/enrichment`);
+    });
+
+    it('allows a retry after a failed warm', () => {
+      service.warm('content-1');
+      httpTesting.expectOne(`${BASE}/content-1/enrichment`).flush('Erro', {
+        status: 500,
+        statusText: 'Internal Server Error',
+      });
+
+      service.warm('content-1');
+      const retry = httpTesting.expectOne(`${BASE}/content-1/enrichment`);
+      expect(retry.request.method).toBe('GET');
+      retry.flush(makeEnrichment());
+    });
+
+    it('does not warm again within the cooldown, even after a reload (sessionStorage)', () => {
+      // Carimbo recente persistido simula um warm de uma carga anterior da Home.
+      sessionStorage.setItem('mn:warm:content-9', String(Date.now()));
+
+      service.warm('content-9');
+
+      httpTesting.expectNone(`${BASE}/content-9/enrichment`);
+    });
+
+    it('warms again once the cooldown has expired', () => {
+      sessionStorage.setItem(
+        'mn:warm:content-9',
+        String(Date.now() - 11 * 60 * 1000),
+      );
+
+      service.warm('content-9');
+
+      httpTesting.expectOne(`${BASE}/content-9/enrichment`).flush({});
+    });
   });
 });

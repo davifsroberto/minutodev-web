@@ -2,9 +2,11 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  effect,
   inject,
 } from '@angular/core';
 
+import { ContentEnrichmentService } from '@app/core/content/content-enrichment.service';
 import { RadarBriefing } from '@app/core/radar/radar.model';
 import { RadarService } from '@app/core/radar/radar.service';
 import { CLOCK } from '@app/core/time/clock';
@@ -27,6 +29,17 @@ import { RadarTodaySectionComponent } from './components/radar-today-section/rad
 export class RadarTodayPageComponent {
   private readonly radar = inject(RadarService);
   private readonly now = inject(CLOCK);
+  private readonly enrichments = inject(ContentEnrichmentService);
+
+  constructor() {
+    // Aquece o enrichment do destaque: gera a tradução pt-BR sob demanda (1
+    // chamada por destaque, cacheada) para que o topo apareça em pt-BR na
+    // próxima carga do radar.
+    effect(() => {
+      const highlight = this.highlight();
+      if (highlight) this.enrichments.warm(highlight.id);
+    });
+  }
 
   protected readonly skeletonCards = [0, 1, 2, 3, 4, 5];
 
