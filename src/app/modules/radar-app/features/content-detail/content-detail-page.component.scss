@@ -37,16 +37,46 @@
   gap: var(--space-6);
 }
 
-.content-article__header {
+.content-hero {
   display: grid;
   gap: var(--space-3);
 }
 
-.content-article__header h2 {
+.content-hero h2 {
   margin: 0;
   font-size: var(--fs-section);
   line-height: var(--lh-heading);
   letter-spacing: 0;
+}
+
+.content-hero__media {
+  margin-bottom: var(--space-2);
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background-color: var(--color-surface-subtle);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.content-hero__image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.content-hero__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-family: var(--font-mono);
+  font-size: var(--fs-small);
+}
+
+.content-hero__source {
+  color: var(--color-text);
 }
 
 .content-article__notice {

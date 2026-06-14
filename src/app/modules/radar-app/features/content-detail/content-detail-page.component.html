@@ -31,9 +31,32 @@
         </div>
       } @else if (data(); as enrichment) {
         <article class="content-article">
-          <header class="content-article__header">
+          <header class="content-hero">
+            <div class="content-hero__media">
+              <img
+                class="content-hero__image"
+                [src]="heroImage()"
+                (error)="onImageError()"
+                alt=""
+                loading="lazy"
+                referrerpolicy="no-referrer"
+              />
+            </div>
             <p class="eyebrow">Conteúdo</p>
             <h2 id="content-detail-title">{{ title() }}</h2>
+            <p class="content-hero__meta">
+              <span class="content-hero__source">{{
+                enrichment.sourceName
+              }}</span>
+              @if (readingTimeMinutes() > 0) {
+                <span aria-hidden="true">·</span>
+                <span>{{ readingTimeMinutes() }} min de leitura</span>
+              }
+              @if (publishedLabel(); as published) {
+                <span aria-hidden="true">·</span>
+                <span>{{ published }}</span>
+              }
+            </p>
           </header>
 
           @if (enrichment.status === 'PENDING') {
@@ -66,7 +89,7 @@
 
           @if (enrichment.shortSummary) {
             <section class="content-section">
-              <h3 class="content-section__title">Resumo rápido</h3>
+              <h3 class="content-section__title">O que é</h3>
               <p class="content-section__text">{{ enrichment.shortSummary }}</p>
             </section>
           }
@@ -80,7 +103,7 @@
 
           @if (keyPoints().length) {
             <section class="content-section">
-              <h3 class="content-section__title">Pontos principais</h3>
+              <h3 class="content-section__title">Principais aprendizados</h3>
               <ul class="content-section__list">
                 @for (point of keyPoints(); track point) {
                   <li>{{ point }}</li>
@@ -89,9 +112,23 @@
             </section>
           }
 
+          @if (enrichment.example) {
+            <section class="content-section">
+              <h3 class="content-section__title">Exemplo citado no artigo</h3>
+              <p class="content-section__text">{{ enrichment.example }}</p>
+            </section>
+          }
+
+          @if (enrichment.whenToUse) {
+            <section class="content-section">
+              <h3 class="content-section__title">Quando vale a pena usar</h3>
+              <p class="content-section__text">{{ enrichment.whenToUse }}</p>
+            </section>
+          }
+
           @if (enrichment.briefContent) {
             <section class="content-section">
-              <h3 class="content-section__title">Conteúdo rápido</h3>
+              <h3 class="content-section__title">Conteúdo detalhado</h3>
               <p class="content-section__text">{{ enrichment.briefContent }}</p>
             </section>
           }

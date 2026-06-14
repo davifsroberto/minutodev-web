@@ -28,8 +28,13 @@ function makeEnrichment(
     shortSummary: 'A nova versão traz melhorias no compilador.',
     whyItMatters: null,
     keyPoints: [],
+    example: null,
+    whenToUse: null,
     briefContent: 'A nova versão traz melhorias no compilador.',
     originalUrl: 'https://devblogs.microsoft.com/typescript/',
+    imageUrl: null,
+    sourceName: 'TypeScript Blog',
+    publishedAt: '2026-06-13T09:12:00.000Z',
     provider: null,
     model: null,
     status: 'PENDING',
@@ -98,13 +103,15 @@ describe('ContentDetailPageComponent', () => {
     httpTesting.expectOne(ENDPOINT).flush(makeEnrichment());
   });
 
-  it('renders the enrichment sections and the source link in a new tab', async () => {
+  it('renders the editorial sections and the source link in a new tab', async () => {
     const harness = await navigate();
     TestBed.tick();
     httpTesting.expectOne(ENDPOINT).flush(
       makeEnrichment({
         whyItMatters: 'Afeta toda a base de código.',
         keyPoints: ['Compilador mais rápido', 'Novos tipos utilitários'],
+        example: 'tsc --noEmit ficou 20% mais rápido.',
+        whenToUse: 'Vale a pena em monorepos grandes.',
       }),
     );
     await harness.fixture.whenStable();
@@ -116,11 +123,15 @@ describe('ContentDetailPageComponent', () => {
     expect(el.querySelector('#content-detail-title')?.textContent).toContain(
       'TypeScript 5.7 lançado',
     );
-    expect(text).toContain('Resumo rápido');
+    expect(text).toContain('O que é');
     expect(text).toContain('Por que importa');
-    expect(text).toContain('Pontos principais');
+    expect(text).toContain('Principais aprendizados');
     expect(text).toContain('Compilador mais rápido');
-    expect(text).toContain('Conteúdo rápido');
+    expect(text).toContain('Exemplo citado no artigo');
+    expect(text).toContain('tsc --noEmit ficou 20% mais rápido.');
+    expect(text).toContain('Quando vale a pena usar');
+    expect(text).toContain('Vale a pena em monorepos grandes.');
+    expect(text).toContain('Conteúdo detalhado');
 
     const source = el.querySelector<HTMLAnchorElement>('.content-source__link');
     expect(source?.getAttribute('href')).toBe(
@@ -128,6 +139,66 @@ describe('ContentDetailPageComponent', () => {
     );
     expect(source?.getAttribute('target')).toBe('_blank');
     expect(source?.getAttribute('rel')).toBe('noopener noreferrer');
+  });
+
+  it('renders the hero with the article image, source and reading time', async () => {
+    const harness = await navigate();
+    TestBed.tick();
+    httpTesting.expectOne(ENDPOINT).flush(
+      makeEnrichment({
+        imageUrl: 'https://cdn.example.test/cover.png',
+        briefContent: 'palavra '.repeat(450),
+      }),
+    );
+    await harness.fixture.whenStable();
+    harness.detectChanges();
+
+    const el = rootOf(harness);
+    const image = el.querySelector<HTMLImageElement>('.content-hero__image');
+    expect(image?.getAttribute('src')).toBe(
+      'https://cdn.example.test/cover.png',
+    );
+    expect(image?.getAttribute('loading')).toBe('lazy');
+
+    const text = el.textContent ?? '';
+    expect(text).toContain('TypeScript Blog');
+    expect(text).toMatch(/\d+ min de leitura/);
+  });
+
+  it('falls back to the minutoDev placeholder when there is no image', async () => {
+    const harness = await navigate();
+    TestBed.tick();
+    httpTesting.expectOne(ENDPOINT).flush(makeEnrichment({ imageUrl: null }));
+    await harness.fixture.whenStable();
+    harness.detectChanges();
+
+    const image = rootOf(harness).querySelector<HTMLImageElement>(
+      '.content-hero__image',
+    );
+    expect(image?.getAttribute('src')).toBe('/content-placeholder.svg');
+  });
+
+  it('swaps to the placeholder when the article image fails to load', async () => {
+    const harness = await navigate();
+    TestBed.tick();
+    httpTesting
+      .expectOne(ENDPOINT)
+      .flush(
+        makeEnrichment({ imageUrl: 'https://cdn.example.test/broken.png' }),
+      );
+    await harness.fixture.whenStable();
+    harness.detectChanges();
+
+    const el = rootOf(harness);
+    const image = el.querySelector<HTMLImageElement>('.content-hero__image');
+    image?.dispatchEvent(new Event('error'));
+    harness.detectChanges();
+
+    expect(
+      el
+        .querySelector<HTMLImageElement>('.content-hero__image')
+        ?.getAttribute('src'),
+    ).toBe('/content-placeholder.svg');
   });
 
   it('shows the error message and a retry action when the request fails', async () => {
