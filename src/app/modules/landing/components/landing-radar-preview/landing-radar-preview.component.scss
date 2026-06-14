@@ -181,11 +181,30 @@
 
 .radar-item__title {
   color: var(--color-text);
+
+  /* Same guard as the description: keep a long headline to two lines. */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
 }
 
 .radar-item__description {
   margin: 0;
   color: var(--color-text-secondary);
+  font-size: var(--fs-caption);
+  line-height: var(--lh-body);
+
+  /* Preview card: clamp to a teaser regardless of how long the API summary
+     is, so a full article body can never balloon the card into a wall of
+     text. `line-clamp` ships the standard property alongside the prefixed
+     one for broad support. */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  overflow: hidden;
 }
 
 .radar-item__source {
