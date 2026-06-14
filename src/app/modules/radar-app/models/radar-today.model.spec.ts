@@ -8,6 +8,7 @@ import {
   RADAR_APP_DISPLAY_ORDER,
   RADAR_APP_SECTION_LABELS,
   RADAR_ITEMS_PER_SECTION,
+  radarBadgeFor,
   toRadarTodaySections,
 } from './radar-today.model';
 
@@ -18,6 +19,7 @@ function makeItem(overrides: Partial<RadarApiItem> = {}): RadarApiItem {
     summary: 'Item summary',
     url: 'https://example.com/item',
     sourceName: 'Example Source',
+    imageUrl: null,
     category: null,
     contentType: 'ARTICLE',
     publishedAt: '2026-06-13T08:00:00.000Z',
@@ -45,9 +47,9 @@ describe('toRadarTodaySections', () => {
     it('defines the app display order, PT-BR labels, and shared cap', () => {
       expect(RADAR_APP_DISPLAY_ORDER).toEqual([
         'trends',
+        'recommended',
         'tools',
         'releases',
-        'recommended',
       ]);
       expect(RADAR_APP_SECTION_LABELS).toEqual({
         trends: 'Tendências',
@@ -74,9 +76,9 @@ describe('toRadarTodaySections', () => {
 
       expect(sectionKeys).toEqual([
         'trends',
+        'recommended',
         'tools',
         'releases',
-        'recommended',
       ]);
     });
 
@@ -94,9 +96,9 @@ describe('toRadarTodaySections', () => {
 
       expect(labels).toEqual([
         'Tendências',
+        'Recomendados',
         'Ferramentas',
         'Releases',
-        'Recomendados',
       ]);
     });
   });
@@ -267,6 +269,7 @@ describe('toRadarTodaySections', () => {
             summary: null,
             url: 'https://example.com/cli',
             sourceName: 'Dev Tools',
+            imageUrl: 'https://cdn.test/cli.png',
             category: 'recommended',
           }),
         ]),
@@ -282,8 +285,54 @@ describe('toRadarTodaySections', () => {
           summary: null,
           url: 'https://example.com/cli',
           sourceName: 'Dev Tools',
+          imageUrl: 'https://cdn.test/cli.png',
+          badge: radarBadgeFor('recommended', 'tools'),
         },
       ]);
+    });
+
+    it('carries imageUrl when present and defaults a missing imageUrl to null', () => {
+      const briefing = makeBriefing([
+        makeSection('trends', [
+          makeItem({
+            id: 'with-image',
+            imageUrl: 'https://cdn.test/cover.png',
+            publishedAt: '2026-06-13T08:00:00.000Z',
+          }),
+          makeItem({
+            id: 'without-image',
+            imageUrl: undefined,
+            publishedAt: '2026-06-12T08:00:00.000Z',
+          }),
+        ]),
+      ]);
+
+      const [section] = toRadarTodaySections(briefing);
+      const imageById = Object.fromEntries(
+        section.items.map((item) => [item.id, item.imageUrl]),
+      );
+
+      expect(imageById['with-image']).toBe('https://cdn.test/cover.png');
+      expect(imageById['without-image']).toBeNull();
+    });
+
+    it('assigns a badge per item: topical category wins, else the section badge', () => {
+      const briefing = makeBriefing([
+        makeSection('recommended', [
+          makeItem({ id: 'ai', category: 'ai' }),
+          makeItem({ id: 'plain', category: 'backend' }),
+        ]),
+      ]);
+
+      const [section] = toRadarTodaySections(briefing);
+      const badgeById = Object.fromEntries(
+        section.items.map((item) => [item.id, item.badge.label]),
+      );
+
+      // categoria temática sobrepõe a seção...
+      expect(badgeById['ai']).toBe('IA');
+      // ...e sem tema reconhecível cai no badge da seção (Recomendado).
+      expect(badgeById['plain']).toBe('Recomendado');
     });
 
     it('does not mutate the input briefing', () => {
@@ -299,5 +348,30 @@ describe('toRadarTodaySections', () => {
 
       expect(briefing).toEqual(snapshot);
     });
+  });
+});
+
+describe('radarBadgeFor', () => {
+  it('uses the topical badge when the category is recognizable', () => {
+    expect(radarBadgeFor('ai', 'recommended').label).toBe('IA');
+    expect(radarBadgeFor('cloud', 'trends').label).toBe('Cloud');
+    expect(radarBadgeFor('security', 'tools').label).toBe('Segurança');
+  });
+
+  it('is case- and accent-insensitive on the category', () => {
+    expect(radarBadgeFor('AI', 'tools').label).toBe('IA');
+    expect(radarBadgeFor('Segurança', 'releases').label).toBe('Segurança');
+  });
+
+  it('falls back to the section badge when no topical category matches', () => {
+    expect(radarBadgeFor(null, 'trends').label).toBe('Tendência');
+    expect(radarBadgeFor('backend', 'releases').label).toBe('Release');
+    expect(radarBadgeFor(null, 'tools').label).toBe('Ferramenta');
+    expect(radarBadgeFor(null, 'recommended').label).toBe('Recomendado');
+  });
+
+  it('always provides a non-empty icon', () => {
+    expect(radarBadgeFor('ai', 'tools').icon.length).toBeGreaterThan(0);
+    expect(radarBadgeFor(null, 'trends').icon.length).toBeGreaterThan(0);
   });
 });

@@ -5,12 +5,19 @@ import {
   RadarSectionKey,
 } from '@app/core/radar/radar.model';
 
+export interface RadarBadge {
+  icon: string;
+  label: string;
+}
+
 export interface RadarTodayItem {
   id: string;
   title: string;
   summary: string | null;
   sourceName: string;
   url: string;
+  imageUrl: string | null;
+  badge: RadarBadge;
 }
 
 export interface RadarTodaySection {
@@ -19,11 +26,15 @@ export interface RadarTodaySection {
   items: RadarTodayItem[];
 }
 
+/**
+ * Ordem visual da Home (Sprint 5D-4.7): destaque no topo, depois Tendências e
+ * Recomendados, então as demais. Independe da ordem que o backend devolve.
+ */
 export const RADAR_APP_DISPLAY_ORDER: readonly RadarSectionKey[] = [
   'trends',
+  'recommended',
   'tools',
   'releases',
-  'recommended',
 ];
 
 export const RADAR_APP_SECTION_LABELS: Record<RadarSectionKey, string> = {
@@ -34,6 +45,46 @@ export const RADAR_APP_SECTION_LABELS: Record<RadarSectionKey, string> = {
 };
 
 export const RADAR_ITEMS_PER_SECTION = 5;
+
+/**
+ * Badge base por seção — o "porquê" do conteúdo aparecer (Sprint 5D-4.4).
+ * Todo item cai em uma seção, então há sempre um badge.
+ */
+const SECTION_BADGE: Record<RadarSectionKey, RadarBadge> = {
+  trends: { icon: '🔥', label: 'Tendência' },
+  tools: { icon: '🛠️', label: 'Ferramenta' },
+  releases: { icon: '🚀', label: 'Release' },
+  recommended: { icon: '⭐', label: 'Recomendado' },
+};
+
+/**
+ * Badge temático (deriva da `category` do conteúdo) que se sobrepõe ao da seção
+ * quando reconhecível — dá um sinal mais específico que o agrupamento.
+ */
+const TOPIC_BADGE: Record<string, RadarBadge> = {
+  ai: { icon: '🤖', label: 'IA' },
+  ia: { icon: '🤖', label: 'IA' },
+  cloud: { icon: '☁️', label: 'Cloud' },
+  security: { icon: '🔒', label: 'Segurança' },
+  seguranca: { icon: '🔒', label: 'Segurança' },
+};
+
+export function radarBadgeFor(
+  category: string | null,
+  sectionKey: RadarSectionKey,
+): RadarBadge {
+  const topic = category ? TOPIC_BADGE[normalizeCategory(category)] : undefined;
+
+  return topic ?? SECTION_BADGE[sectionKey];
+}
+
+function normalizeCategory(value: string): string {
+  return value
+    .trim()
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/\p{Diacritic}/gu, '');
+}
 
 export function toRadarTodaySections(
   briefing: RadarBriefing,
@@ -49,7 +100,9 @@ export function toRadarTodaySections(
     const items =
       sectionsByKey.get(sectionKey)?.items.slice().sort(compareNewestFirst) ??
       [];
-    const cappedItems = items.slice(0, cap).map(toRadarTodayItem);
+    const cappedItems = items
+      .slice(0, cap)
+      .map((item) => toRadarTodayItem(item, sectionKey));
 
     if (!cappedItems.length) continue;
 
@@ -71,12 +124,17 @@ function compareNewestFirst(current: RadarApiItem, next: RadarApiItem): number {
   return Date.parse(next.publishedAt) - Date.parse(current.publishedAt);
 }
 
-function toRadarTodayItem(item: RadarApiItem): RadarTodayItem {
+function toRadarTodayItem(
+  item: RadarApiItem,
+  sectionKey: RadarSectionKey,
+): RadarTodayItem {
   return {
     id: item.id,
     title: item.title,
     summary: item.summary,
     sourceName: item.sourceName,
     url: item.url,
+    imageUrl: item.imageUrl ?? null,
+    badge: radarBadgeFor(item.category, sectionKey),
   };
 }

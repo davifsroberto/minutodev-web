@@ -17,6 +17,9 @@ export interface RadarApiItem {
   summary: string | null;
   url: string;
   sourceName: string;
+  // O backend sempre envia (string|null); opcional aqui só para não obrigar
+  // fixtures/mocks legados a preenchê-lo. Leia sempre como `imageUrl ?? null`.
+  imageUrl?: string | null;
   category: string | null;
   contentType: ContentType;
   publishedAt: string | null;

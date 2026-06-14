@@ -1,0 +1,27 @@
+<a class="radar-highlight" [routerLink]="['/app/content', item().id]">
+  <span class="radar-highlight__media">
+    <app-radar-thumb
+      [imageUrl]="item().imageUrl"
+      [sourceName]="item().sourceName"
+    />
+  </span>
+
+  <span class="radar-highlight__body">
+    <span class="radar-badge">
+      <span class="radar-badge__icon" aria-hidden="true">{{
+        item().badge.icon
+      }}</span>
+      {{ item().badge.label }}
+    </span>
+
+    <strong class="radar-highlight__title">{{ item().title }}</strong>
+
+    @if (item().summary; as summary) {
+      <span class="radar-highlight__summary">{{ summary }}</span>
+    }
+
+    <span class="radar-highlight__source">{{ item().sourceName }}</span>
+
+    <span class="radar-highlight__cta" aria-hidden="true">Ler resumo →</span>
+  </span>
+</a>

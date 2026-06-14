@@ -192,7 +192,7 @@ describe('RadarTodayPageComponent', () => {
   });
 
   describe('resolved state', () => {
-    it('renders the radar date, real read time, and non-empty sections in display order', async () => {
+    it('renders the date, compact stats, a highlight, and the remaining sections', async () => {
       const fixture = TestBed.createComponent(RadarTodayPageComponent);
       TestBed.tick();
       httpTesting.expectOne(matchRadar).flush(fullBriefing());
@@ -204,9 +204,18 @@ describe('RadarTodayPageComponent', () => {
       ).map((heading) => heading.textContent?.trim());
 
       expect(el.textContent).toContain('13/06/2026');
-      expect(el.textContent).toContain('Tempo estimado: 7 minutos');
+      expect(el.textContent).toContain('7 min de leitura');
+      expect(el.textContent).toContain('5 conteúdos');
       expect(headings).toEqual(['Tendências', 'Ferramentas', 'Releases']);
-      expect(el.querySelectorAll('.radar-section__item')).toHaveLength(5);
+
+      // O destaque é o item mais recente da 1ª seção, exibido fora das listas.
+      const highlight = el.querySelector('app-radar-highlight-card');
+      expect(highlight?.textContent).toContain(
+        'Signals se consolidam em frameworks web',
+      );
+
+      // 5 itens no total; 1 vira destaque, restando 4 cards nas listas.
+      expect(el.querySelectorAll('.radar-card')).toHaveLength(4);
       expect(el.querySelector('.radar-state')).toBeNull();
     });
 
@@ -252,7 +261,7 @@ describe('RadarTodayPageComponent', () => {
         'Último briefing disponível',
       );
       expect(el.textContent).toContain('10/06/2026');
-      expect(el.textContent).toContain('Tempo estimado: 8 minutos');
+      expect(el.textContent).toContain('8 min de leitura');
       expect(
         el.querySelectorAll('app-radar-today-section').length,
       ).toBeGreaterThan(0);

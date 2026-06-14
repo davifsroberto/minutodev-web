@@ -9,12 +9,12 @@
 .radar-page__inner {
   display: grid;
   gap: var(--space-8);
-  max-width: 56rem;
+  max-width: 64rem;
 }
 
 .radar-page__header {
   display: grid;
-  gap: var(--space-4);
+  gap: var(--space-3);
 }
 
 .radar-page__header h2 {
@@ -23,42 +23,38 @@
   letter-spacing: 0;
 }
 
-.radar-page__meta {
+/* Faixa compacta de estatísticas (5D-4.5): data, tempo e nº de conteúdos. */
+.radar-stats {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-3);
+  gap: var(--space-2) var(--space-4);
   margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
-.radar-page__meta-item {
-  display: grid;
-  gap: var(--space-1);
-  min-width: min(100%, 12rem);
-  padding: var(--space-3) var(--space-4);
-  background-color: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-micro);
-}
-
-.radar-page__meta dt {
+.radar-stats__item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
   color: var(--color-text-secondary);
   font-family: var(--font-mono);
   font-size: var(--fs-small);
 }
 
-.radar-page__meta dd {
-  margin: 0;
-  color: var(--color-text);
-  font-weight: 600;
+.radar-stats__icon {
+  font-size: 1em;
+  line-height: 1;
 }
 
 .radar-page__body {
+  display: grid;
+  gap: var(--space-8);
   min-height: 18rem;
 }
 
 .radar-page__fallback-notice {
-  margin: 0 0 var(--space-6);
+  margin: 0;
   padding: var(--space-3) var(--space-4);
   color: var(--color-text-secondary);
   background-color: var(--color-surface-subtle);
@@ -68,52 +64,51 @@
   font-size: var(--fs-small);
 }
 
+.radar-page__highlight {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.radar-page__highlight-title {
+  margin: 0;
+  font-size: var(--fs-subheading);
+  letter-spacing: 0;
+}
+
 .radar-page__sections {
   display: grid;
-  gap: var(--space-8);
+  gap: var(--space-10);
 }
+
+/* ---- Skeleton ---- */
 
 .radar-page__skeleton {
   display: grid;
   gap: var(--space-8);
 }
 
-.radar-skeleton-section {
+.radar-skeleton-grid {
   display: grid;
-  gap: var(--space-5);
-}
-
-.radar-skeleton-section__items {
-  display: grid;
-  gap: var(--space-2);
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 15rem), 1fr));
+  gap: var(--space-4);
 }
 
 .skeleton {
   display: block;
-  height: 0.75rem;
   background-color: var(--color-surface-subtle);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md);
   animation: radar-skeleton-pulse 1.4s ease-in-out infinite;
 }
 
-.skeleton--heading {
-  width: 12rem;
-  height: 1.75rem;
+.skeleton--highlight {
+  height: 16rem;
 }
 
-.skeleton--item-title {
-  width: min(100%, 34rem);
-  height: 1rem;
-  margin-top: var(--space-2);
+.skeleton--card {
+  height: 12rem;
 }
 
-.skeleton--item-summary {
-  width: min(100%, 46rem);
-}
-
-.skeleton--item-source {
-  width: 9rem;
-}
+/* ---- States ---- */
 
 .radar-state {
   display: grid;

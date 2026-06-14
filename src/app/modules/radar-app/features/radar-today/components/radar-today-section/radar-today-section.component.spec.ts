@@ -29,6 +29,8 @@ const sectionFixture: RadarTodaySection = {
       summary: 'Adoção cresce em bibliotecas de UI modernas.',
       sourceName: 'Engineering Daily',
       url: 'https://example.com/signals',
+      imageUrl: 'https://cdn.test/signals.png',
+      badge: { icon: '🔥', label: 'Tendência' },
     },
     {
       id: 'trend-2',
@@ -36,6 +38,8 @@ const sectionFixture: RadarTodaySection = {
       summary: null,
       sourceName: 'Release Radar',
       url: 'https://example.com/runtime',
+      imageUrl: null,
+      badge: { icon: '🤖', label: 'IA' },
     },
   ],
 };
@@ -69,37 +73,58 @@ describe('RadarTodaySectionComponent', () => {
     );
   });
 
-  it('renders one list entry per item with title and source name', () => {
+  it('renders one card per item with title and source name', () => {
     const fixture = createComponent();
     const el = fixture.nativeElement as HTMLElement;
-    const items = el.querySelectorAll<HTMLLIElement>('.radar-section__item');
+    const cards = el.querySelectorAll<HTMLAnchorElement>('.radar-card');
 
-    expect(items).toHaveLength(2);
-    expect(items[0].textContent).toContain(
+    expect(cards).toHaveLength(2);
+    expect(cards[0].textContent).toContain(
       'Signals se consolidam nos frameworks',
     );
-    expect(items[0].textContent).toContain('Fonte: Engineering Daily');
-    expect(items[1].textContent).toContain('Runtime novo ganha tração');
-    expect(items[1].textContent).toContain('Fonte: Release Radar');
+    expect(cards[0].textContent).toContain('Engineering Daily');
+    expect(cards[1].textContent).toContain('Runtime novo ganha tração');
+    expect(cards[1].textContent).toContain('Release Radar');
   });
 
-  it('renders summaries when present and omits the summary element when summary is null', () => {
+  it('renders the badge label on each card', () => {
     const fixture = createComponent();
     const el = fixture.nativeElement as HTMLElement;
-    const links = el.querySelectorAll<HTMLAnchorElement>(
-      '.radar-section__link',
-    );
+    const badges = Array.from(
+      el.querySelectorAll<HTMLElement>('.radar-badge'),
+    ).map((badge) => badge.textContent?.trim());
 
-    expect(links[0].querySelector('.radar-section__summary')?.textContent).toBe(
-      'Adoção cresce em bibliotecas de UI modernas.',
-    );
-    expect(links[1].querySelector('.radar-section__summary')).toBeNull();
-    expect(el.querySelectorAll('.radar-section__summary')).toHaveLength(1);
+    expect(badges).toHaveLength(2);
+    expect(badges[0]).toContain('Tendência');
+    expect(badges[1]).toContain('IA');
   });
 
-  it('links each item to its internal content route instead of the external source', () => {
+  it('renders a thumbnail per card: real image when present, branded cover when null', () => {
     const fixture = createComponent();
-    const links = fixture.debugElement.queryAll(By.css('.radar-section__link'));
+    const el = fixture.nativeElement as HTMLElement;
+    const images = el.querySelectorAll<HTMLImageElement>('img.radar-thumb');
+
+    expect(images).toHaveLength(2);
+    images.forEach((image) => {
+      expect(image.getAttribute('alt')).toBe('');
+      expect(image.getAttribute('referrerpolicy')).toBe('no-referrer');
+    });
+    expect(images[0].getAttribute('src')).toBe('https://cdn.test/signals.png');
+    expect(images[1].getAttribute('src')).toContain('data:image/svg+xml');
+  });
+
+  it('does not show item summaries on the home cards (density reduced)', () => {
+    const fixture = createComponent();
+    const el = fixture.nativeElement as HTMLElement;
+
+    expect(el.textContent).not.toContain(
+      'Adoção cresce em bibliotecas de UI modernas.',
+    );
+  });
+
+  it('links each card to its internal content route instead of the external source', () => {
+    const fixture = createComponent();
+    const links = fixture.debugElement.queryAll(By.css('.radar-card'));
 
     expect(links).toHaveLength(2);
     links.forEach((link, index) => {
@@ -112,16 +137,13 @@ describe('RadarTodaySectionComponent', () => {
     });
   });
 
-  it('no longer opens the original source in a new tab from the card', () => {
+  it('does not open the original source in a new tab from the card', () => {
     const fixture = createComponent();
     const el = fixture.nativeElement as HTMLElement;
-    const links = el.querySelectorAll<HTMLAnchorElement>(
-      '.radar-section__link',
-    );
+    const cards = el.querySelectorAll<HTMLAnchorElement>('.radar-card');
 
-    links.forEach((link) => {
-      expect(link.getAttribute('target')).toBeNull();
-      expect(link.querySelector('.visually-hidden')).toBeNull();
+    cards.forEach((card) => {
+      expect(card.getAttribute('target')).toBeNull();
     });
   });
 

@@ -5,18 +5,20 @@
       <h2 id="radar-today-title">Briefing diário</h2>
 
       @if (briefing(); as briefing) {
-        <dl class="radar-page__meta" aria-label="Resumo do Radar de Hoje">
-          <div class="radar-page__meta-item">
-            <dt>Data</dt>
-            <dd>{{ formattedDate() }}</dd>
-          </div>
-          <div class="radar-page__meta-item">
-            <dt>Tempo</dt>
-            <dd>
-              Tempo estimado: {{ briefing.estimatedReadTimeMinutes }} minutos
-            </dd>
-          </div>
-        </dl>
+        <ul class="radar-stats" aria-label="Resumo do Radar de Hoje">
+          <li class="radar-stats__item">
+            <span class="radar-stats__icon" aria-hidden="true">🗓</span>
+            {{ formattedDate() }}
+          </li>
+          <li class="radar-stats__item">
+            <span class="radar-stats__icon" aria-hidden="true">⏱</span>
+            {{ briefing.estimatedReadTimeMinutes }} min de leitura
+          </li>
+          <li class="radar-stats__item">
+            <span class="radar-stats__icon" aria-hidden="true">📚</span>
+            {{ totalCount() }} conteúdos
+          </li>
+        </ul>
       }
     </header>
 
@@ -29,18 +31,12 @@
       @if (loading()) {
         <p class="visually-hidden">Carregando o Radar de Hoje.</p>
         <div class="radar-page__skeleton" aria-hidden="true">
-          @for (section of skeletonSections; track section) {
-            <section class="radar-skeleton-section">
-              <span class="skeleton skeleton--heading"></span>
-              <div class="radar-skeleton-section__items">
-                @for (item of skeletonItems; track item) {
-                  <span class="skeleton skeleton--item-title"></span>
-                  <span class="skeleton skeleton--item-summary"></span>
-                  <span class="skeleton skeleton--item-source"></span>
-                }
-              </div>
-            </section>
-          }
+          <span class="skeleton skeleton--highlight"></span>
+          <div class="radar-skeleton-grid">
+            @for (card of skeletonCards; track card) {
+              <span class="skeleton skeleton--card"></span>
+            }
+          </div>
         </div>
       } @else if (error()) {
         <div class="radar-state radar-state--error" tabindex="-1">
@@ -65,8 +61,21 @@
             disponível.
           </p>
         }
+
+        @if (highlight(); as item) {
+          <section
+            class="radar-page__highlight"
+            aria-labelledby="radar-highlight-title"
+          >
+            <h2 id="radar-highlight-title" class="radar-page__highlight-title">
+              Destaque de hoje
+            </h2>
+            <app-radar-highlight-card [item]="item" />
+          </section>
+        }
+
         <div class="radar-page__sections">
-          @for (section of sections(); track section.key) {
+          @for (section of displaySections(); track section.key) {
             <app-radar-today-section [section]="section" />
           }
         </div>
