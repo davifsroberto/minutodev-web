@@ -6,4 +6,9 @@ export class LocalDateUtil {
 
     return `${year}-${month}-${day}`;
   }
+
+  static toDisplayDate(param: string): string {
+    const [year, month, day] = param.split('-');
+    return `${day}/${month}/${year}`;
+  }
 }

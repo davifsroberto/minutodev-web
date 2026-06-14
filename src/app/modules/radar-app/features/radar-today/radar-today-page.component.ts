@@ -38,6 +38,11 @@ export class RadarTodayPageComponent {
     return briefing ? toRadarTodaySections(briefing) : [];
   });
 
+  readonly formattedDate = computed(() => {
+    const briefing = this.briefing();
+    return briefing ? LocalDateUtil.toDisplayDate(briefing.date) : '';
+  });
+
   readonly isFallback = computed(() => {
     const briefing = this.briefing();
     return (

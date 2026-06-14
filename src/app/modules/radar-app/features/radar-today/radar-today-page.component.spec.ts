@@ -203,7 +203,7 @@ describe('RadarTodayPageComponent', () => {
         el.querySelectorAll<HTMLHeadingElement>('.radar-section__title'),
       ).map((heading) => heading.textContent?.trim());
 
-      expect(el.textContent).toContain('2026-06-13');
+      expect(el.textContent).toContain('13/06/2026');
       expect(el.textContent).toContain('Tempo estimado: 7 minutos');
       expect(headings).toEqual(['Tendências', 'Ferramentas', 'Releases']);
       expect(el.querySelectorAll('.radar-section__item')).toHaveLength(5);
@@ -251,7 +251,7 @@ describe('RadarTodayPageComponent', () => {
       expect(el.querySelector('.eyebrow')?.textContent?.trim()).toBe(
         'Último briefing disponível',
       );
-      expect(el.textContent).toContain('2026-06-10');
+      expect(el.textContent).toContain('10/06/2026');
       expect(el.textContent).toContain('Tempo estimado: 8 minutos');
       expect(
         el.querySelectorAll('app-radar-today-section').length,

@@ -22,3 +22,13 @@ describe('toLocalDateParam', () => {
     ).toBe('2026-06-13');
   });
 });
+
+describe('toDisplayDate', () => {
+  it('reformats a YYYY-MM-DD param as dd/mm/yyyy', () => {
+    expect(LocalDateUtil.toDisplayDate('2026-06-14')).toBe('14/06/2026');
+  });
+
+  it('preserves zero-padding', () => {
+    expect(LocalDateUtil.toDisplayDate('2026-01-05')).toBe('05/01/2026');
+  });
+});
