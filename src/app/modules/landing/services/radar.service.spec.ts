@@ -7,14 +7,20 @@ import { ApplicationRef } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 
 import { environment } from '@environments/environment';
+import { CLOCK } from '../../../core/time/clock';
+import { LocalDateUtil } from '../../../core/time/local-date.util';
 import { RadarBriefing } from '../models/radar.model';
 import { RadarService } from './radar.service';
 
-const ENDPOINT = `${environment.apiBaseUrl}/radar/today`;
+const BASE = `${environment.apiBaseUrl}/radar/today`;
+
+const FIXED_NOW = new Date(2026, 5, 13, 22, 30, 0);
+const LOCAL_DATE = '2026-06-13';
+const ENDPOINT = `${BASE}?date=${LOCAL_DATE}`;
 
 function makeBriefing(): RadarBriefing {
   return {
-    date: '2026-06-13',
+    date: LOCAL_DATE,
     estimatedReadTimeMinutes: 7,
     sections: [
       {
@@ -45,7 +51,11 @@ describe('RadarService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [provideHttpClient(), provideHttpClientTesting()],
+      providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        { provide: CLOCK, useValue: () => FIXED_NOW },
+      ],
     });
 
     service = TestBed.inject(RadarService);
@@ -58,21 +68,25 @@ describe('RadarService', () => {
   });
 
   describe('unit — request shape', () => {
-    it('issues a single GET to `${apiBaseUrl}/radar/today` on first read', () => {
+    it('issues a single GET to `/radar/today` carrying the local `date`', () => {
       TestBed.tick();
 
       const req = httpTesting.expectOne(ENDPOINT);
       expect(req.request.method).toBe('GET');
+      expect(req.request.url).toBe(BASE);
 
       req.flush(makeBriefing());
     });
 
-    it('sends no Authorization header and no query params', () => {
+    it('sends the user local day as the only query param, no Authorization', () => {
       TestBed.tick();
 
       const req = httpTesting.expectOne(ENDPOINT);
       expect(req.request.headers.has('Authorization')).toBe(false);
-      expect(req.request.params.keys()).toHaveLength(0);
+      expect(req.request.params.keys()).toEqual(['date']);
+      expect(req.request.params.get('date')).toBe(
+        LocalDateUtil.toLocalDateParam(FIXED_NOW),
+      );
       expect(req.request.urlWithParams).toBe(ENDPOINT);
 
       req.flush(makeBriefing());

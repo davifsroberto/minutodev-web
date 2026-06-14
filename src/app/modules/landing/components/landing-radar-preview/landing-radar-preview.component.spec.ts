@@ -1,4 +1,4 @@
-import { provideHttpClient } from '@angular/common/http';
+import { HttpRequest, provideHttpClient } from '@angular/common/http';
 import {
   HttpTestingController,
   provideHttpClientTesting,
@@ -14,6 +14,10 @@ import { LandingRadarPreviewComponent } from './landing-radar-preview.component'
 expect.extend(toHaveNoViolations);
 
 const ENDPOINT = `${environment.apiBaseUrl}/radar/today`;
+
+// The service appends a `date` query param (the user's local day), so match on
+// the param-less URL — these tests don't care which day is requested.
+const matchRadar = (req: HttpRequest<unknown>): boolean => req.url === ENDPOINT;
 
 /**
  * Run AXE against the WCAG A/AA rule set. `color-contrast` is disabled because
@@ -153,7 +157,7 @@ describe('LandingRadarPreviewComponent', () => {
     it('shows the skeleton with aria-busy and no cards/empty/error before flush', () => {
       const fixture = TestBed.createComponent(LandingRadarPreviewComponent);
       TestBed.tick();
-      httpTesting.expectOne(ENDPOINT);
+      httpTesting.expectOne(matchRadar);
 
       const el = fixture.nativeElement as HTMLElement;
       expect(
@@ -168,7 +172,7 @@ describe('LandingRadarPreviewComponent', () => {
     it('passes AXE while loading', async () => {
       const fixture = TestBed.createComponent(LandingRadarPreviewComponent);
       TestBed.tick();
-      httpTesting.expectOne(ENDPOINT);
+      httpTesting.expectOne(matchRadar);
 
       await expectNoAxeViolations(fixture.nativeElement as HTMLElement);
     });
@@ -178,7 +182,7 @@ describe('LandingRadarPreviewComponent', () => {
     it('renders four safe source links with accessible names and visible sources', async () => {
       const fixture = TestBed.createComponent(LandingRadarPreviewComponent);
       TestBed.tick();
-      httpTesting.expectOne(ENDPOINT).flush(fullBriefing());
+      httpTesting.expectOne(matchRadar).flush(fullBriefing());
       await settle(fixture);
 
       const el = fixture.nativeElement as HTMLElement;
@@ -212,7 +216,7 @@ describe('LandingRadarPreviewComponent', () => {
     it('renders the real read-time and drops the illustrative disclaimer', async () => {
       const fixture = TestBed.createComponent(LandingRadarPreviewComponent);
       TestBed.tick();
-      httpTesting.expectOne(ENDPOINT).flush(fullBriefing());
+      httpTesting.expectOne(matchRadar).flush(fullBriefing());
       await settle(fixture);
 
       const el = fixture.nativeElement as HTMLElement;
@@ -226,7 +230,7 @@ describe('LandingRadarPreviewComponent', () => {
     it('omits the description paragraph when the summary is null', async () => {
       const fixture = TestBed.createComponent(LandingRadarPreviewComponent);
       TestBed.tick();
-      httpTesting.expectOne(ENDPOINT).flush(nullDescriptionBriefing());
+      httpTesting.expectOne(matchRadar).flush(nullDescriptionBriefing());
       await settle(fixture);
 
       const el = fixture.nativeElement as HTMLElement;
@@ -237,7 +241,7 @@ describe('LandingRadarPreviewComponent', () => {
     it('passes AXE when resolved', async () => {
       const fixture = TestBed.createComponent(LandingRadarPreviewComponent);
       TestBed.tick();
-      httpTesting.expectOne(ENDPOINT).flush(fullBriefing());
+      httpTesting.expectOne(matchRadar).flush(fullBriefing());
       await settle(fixture);
 
       await expectNoAxeViolations(fixture.nativeElement as HTMLElement);
@@ -248,7 +252,7 @@ describe('LandingRadarPreviewComponent', () => {
     it('shows the friendly empty message with no cards and no error', async () => {
       const fixture = TestBed.createComponent(LandingRadarPreviewComponent);
       TestBed.tick();
-      httpTesting.expectOne(ENDPOINT).flush(emptyBriefing());
+      httpTesting.expectOne(matchRadar).flush(emptyBriefing());
       await settle(fixture);
 
       const el = fixture.nativeElement as HTMLElement;
@@ -262,7 +266,7 @@ describe('LandingRadarPreviewComponent', () => {
     it('passes AXE when empty', async () => {
       const fixture = TestBed.createComponent(LandingRadarPreviewComponent);
       TestBed.tick();
-      httpTesting.expectOne(ENDPOINT).flush(emptyBriefing());
+      httpTesting.expectOne(matchRadar).flush(emptyBriefing());
       await settle(fixture);
 
       await expectNoAxeViolations(fixture.nativeElement as HTMLElement);
@@ -273,7 +277,7 @@ describe('LandingRadarPreviewComponent', () => {
     it('shows the error message and retry; retry re-requests and resolves to cards', async () => {
       const fixture = TestBed.createComponent(LandingRadarPreviewComponent);
       TestBed.tick();
-      httpTesting.expectOne(ENDPOINT).error(new ProgressEvent('error'), {
+      httpTesting.expectOne(matchRadar).error(new ProgressEvent('error'), {
         status: 503,
         statusText: 'Service Unavailable',
       });
@@ -290,7 +294,7 @@ describe('LandingRadarPreviewComponent', () => {
       // Retry triggers a second request that resolves to live cards.
       retry!.click();
       TestBed.tick();
-      httpTesting.expectOne(ENDPOINT).flush(fullBriefing());
+      httpTesting.expectOne(matchRadar).flush(fullBriefing());
       await settle(fixture);
 
       expect(el.querySelectorAll('.radar-item__link')).toHaveLength(4);
@@ -301,7 +305,7 @@ describe('LandingRadarPreviewComponent', () => {
       const fixture = TestBed.createComponent(LandingRadarPreviewComponent);
       TestBed.tick();
       httpTesting
-        .expectOne(ENDPOINT)
+        .expectOne(matchRadar)
         .error(new ProgressEvent('error'), { status: 503, statusText: 'down' });
       await settle(fixture);
 

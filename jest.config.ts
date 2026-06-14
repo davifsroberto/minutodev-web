@@ -1,5 +1,8 @@
 import type { Config } from 'jest';
 
+// Pin a stable non-UTC timezone (UTC-3) so local-vs-UTC date tests are deterministic.
+process.env.TZ = 'America/Sao_Paulo';
+
 const config: Config = {
   preset: 'jest-preset-angular',
   setupFilesAfterEnv: ['<rootDir>/setup-jest.ts'],
