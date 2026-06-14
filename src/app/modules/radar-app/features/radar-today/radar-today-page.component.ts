@@ -13,7 +13,7 @@ import {
   RadarTodaySection,
   toRadarTodaySections,
 } from '../../models/radar-today.model';
-import { RadarTodaySectionComponent } from './radar-today-section.component';
+import { RadarTodaySectionComponent } from './components/radar-today-section/radar-today-section.component';
 
 @Component({
   selector: 'app-radar-today-page',

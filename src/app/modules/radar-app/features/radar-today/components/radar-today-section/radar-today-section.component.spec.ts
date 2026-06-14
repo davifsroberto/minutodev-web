@@ -3,7 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { getAllByRole } from '@testing-library/dom';
 import { axe, toHaveNoViolations } from 'jest-axe';
 
-import { RadarTodaySection } from '../../models/radar-today.model';
+import { RadarTodaySection } from '../../../../models/radar-today.model';
 import { RadarTodaySectionComponent } from './radar-today-section.component';
 
 expect.extend(toHaveNoViolations);

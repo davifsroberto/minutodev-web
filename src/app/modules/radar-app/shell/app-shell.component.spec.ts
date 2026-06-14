@@ -11,9 +11,11 @@ import { AppShellComponent } from './app-shell.component';
 
 expect.extend(toHaveNoViolations);
 
+const childStubTemplate = 'Filho roteado';
+
 @Component({
   selector: 'app-radar-shell-child-stub',
-  templateUrl: './app-shell-child-stub.component.html',
+  template: childStubTemplate,
 })
 class RoutedChildStubComponent {}
 

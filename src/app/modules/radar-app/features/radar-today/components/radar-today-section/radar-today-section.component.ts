@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 
-import { RadarTodaySection } from '../../models/radar-today.model';
+import { RadarTodaySection } from '../../../../models/radar-today.model';
 
 @Component({
   selector: 'app-radar-today-section',
