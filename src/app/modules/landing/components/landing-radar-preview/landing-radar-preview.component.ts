@@ -6,11 +6,20 @@ import {
 } from '@angular/core';
 
 import { RadarService } from '@app/core/radar/radar.service';
-import { toRadarItems } from '../../models/radar.model';
-import { RadarItem } from '../../models/radar-item.model';
+import { RadarHighlightCardComponent } from '@app/modules/radar-app/features/radar-today/components/radar-highlight-card/radar-highlight-card.component';
+import {
+  RadarTodayItem,
+  toRadarTodaySections,
+} from '@app/modules/radar-app/models/radar-today.model';
 
+/**
+ * Preview da Home dentro da landing. Reaproveita o card de destaque real do
+ * Radar para parecer o produto em funcionamento, e o clique navega para o
+ * briefing interno (`/app/content/:id`) — nunca para a fonte externa.
+ */
 @Component({
   selector: 'app-landing-radar-preview',
+  imports: [RadarHighlightCardComponent],
   templateUrl: './landing-radar-preview.component.html',
   styleUrl: './landing-radar-preview.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -18,16 +27,18 @@ import { RadarItem } from '../../models/radar-item.model';
 export class LandingRadarPreviewComponent {
   private readonly radar = inject(RadarService);
 
-  protected readonly skeletonRows = [0, 1, 2, 3];
-
   private readonly briefing = computed(() =>
     this.radar.today.hasValue() ? this.radar.today.value() : undefined,
   );
 
-  readonly items = computed<RadarItem[]>(() => {
+  private readonly sections = computed(() => {
     const briefing = this.briefing();
-    return briefing ? toRadarItems(briefing) : [];
+    return briefing ? toRadarTodaySections(briefing) : [];
   });
+
+  readonly highlight = computed<RadarTodayItem | null>(
+    () => this.sections()[0]?.items[0] ?? null,
+  );
 
   readonly estimatedMinutes = computed(
     () => this.briefing()?.estimatedReadTimeMinutes ?? 0,
@@ -44,10 +55,10 @@ export class LandingRadarPreviewComponent {
       !this.loading() &&
       !this.error() &&
       this.briefing() !== undefined &&
-      !this.items().length,
+      !this.highlight(),
   );
 
-  readonly resolved = computed(() => !!this.items().length);
+  readonly resolved = computed(() => !!this.highlight());
 
   protected retry(): void {
     this.radar.today.reload();

@@ -2,14 +2,13 @@
   display: block;
 }
 
-.radar-card {
-  max-width: 46rem;
-  margin-inline: auto;
+.radar-window {
+  /* Ocupa a largura do .container, igual à seção de seções acima. */
   overflow: hidden;
 }
 
-/* Window chrome — turns the preview into a familiar app/terminal surface. */
-.radar-card__chrome {
+/* Window chrome — turns the preview into a familiar app surface. */
+.radar-window__chrome {
   display: flex;
   align-items: center;
   gap: var(--space-2);
@@ -19,33 +18,33 @@
   border-bottom: 1px solid var(--color-border);
 }
 
-.radar-card__dot {
+.radar-window__dot {
   width: 11px;
   height: 11px;
   border-radius: 50%;
   background: var(--color-border-soft);
 }
 
-.radar-card__dot:nth-child(1) {
+.radar-window__dot:nth-child(1) {
   background: #ff5f57;
 }
 
-.radar-card__dot:nth-child(2) {
+.radar-window__dot:nth-child(2) {
   background: #febc2e;
 }
 
-.radar-card__dot:nth-child(3) {
+.radar-window__dot:nth-child(3) {
   background: #28c840;
 }
 
-.radar-card__path {
+.radar-window__path {
   margin-left: var(--space-3);
   font-family: var(--font-mono);
   font-size: var(--fs-small);
   color: var(--color-text-secondary);
 }
 
-.radar-card__head {
+.radar-window__head {
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
@@ -53,106 +52,30 @@
   margin-bottom: var(--space-5);
 }
 
-.radar-card__head .badge {
+.radar-window__head .badge {
   font-family: var(--font-mono);
   font-weight: 500;
 }
 
-.radar-card__clock {
+.radar-window__clock {
   margin-right: var(--space-1);
   vertical-align: text-bottom;
 }
 
-.radar-card__list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
+.radar-window__body {
+  display: grid;
 }
 
-.radar-item {
-  list-style: none;
-}
-
-/* Every item is a consistent card at rest (padding, surface, border, hover) —
-   the box lives on the link so the whole card is one keyboard-reachable,
-   clickable target. */
-.radar-item__link {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-  padding: var(--space-4);
-  background-color: var(--color-surface-subtle);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  color: inherit;
-  text-decoration: none;
-  transition:
-    transform 0.18s ease,
-    border-color 0.18s ease,
-    box-shadow 0.18s ease;
-}
-
-.radar-item__link:hover {
-  transform: translateY(-2px);
-  border-color: var(--color-border-soft);
-  box-shadow: var(--shadow-subtle);
-  text-decoration: none;
-}
-
-.radar-item__link:focus-visible {
-  outline: 2px solid var(--color-brand);
-  outline-offset: 2px;
-}
-
-/* The day's headline trend gets a brand accent rail + tint to stand out. */
-.radar-item__link:has(.badge--brand) {
-  border-color: var(--color-border-soft);
-  border-left: 3px solid var(--color-brand);
-  background-color: var(--color-surface-brand);
-}
-
-.radar-item__link .badge {
-  align-self: flex-start;
-}
-
-/* --- Loading skeleton — mirrors the card layout to cut perceived wait. --- */
-.radar-item--skeleton {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-  padding: var(--space-4);
-  background-color: var(--color-surface-subtle);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-}
-
+/* --- Loading skeleton — mirrors the highlight card. --- */
 .skeleton {
   display: block;
-  height: 0.75rem;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-lg);
   background-color: var(--color-surface-subtle);
   animation: radar-skeleton-pulse 1.4s ease-in-out infinite;
 }
 
-.skeleton--badge {
-  width: 8rem;
-  height: 1.25rem;
-}
-
-.skeleton--title {
-  width: 70%;
-  height: 1rem;
-}
-
-.skeleton--text {
-  width: 90%;
-}
-
-.skeleton--source {
-  width: 30%;
+.skeleton--highlight {
+  height: 14rem;
 }
 
 @keyframes radar-skeleton-pulse {
@@ -170,14 +93,6 @@
   .skeleton {
     animation: none;
   }
-
-  .radar-item__link {
-    transition: none;
-  }
-
-  .radar-item__link:hover {
-    transform: none;
-  }
 }
 
 /* --- Empty / error states --------------------------------------------- */
@@ -194,42 +109,8 @@
   color: var(--color-text-secondary);
 }
 
-.radar-item__title {
-  color: var(--color-text);
-
-  /* Same guard as the description: keep a long headline to two lines. */
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
-  overflow: hidden;
-}
-
-.radar-item__description {
-  margin: 0;
-  color: var(--color-text-secondary);
-  font-size: var(--fs-caption);
-  line-height: var(--lh-body);
-
-  /* Preview card: clamp to a teaser regardless of how long the API summary
-     is, so a full article body can never balloon the card into a wall of
-     text. `line-clamp` ships the standard property alongside the prefixed
-     one for broad support. */
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 3;
-  line-clamp: 3;
-  overflow: hidden;
-}
-
-.radar-item__source {
-  color: var(--color-text-secondary);
-  font-family: var(--font-mono);
-  font-size: var(--fs-small);
-}
-
 @media (min-width: 640px) {
-  .radar-card__head {
+  .radar-window__head {
     flex-direction: row;
     align-items: center;
     justify-content: space-between;

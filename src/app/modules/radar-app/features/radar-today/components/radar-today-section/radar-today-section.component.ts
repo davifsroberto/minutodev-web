@@ -1,12 +1,11 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
-import { RouterLink } from '@angular/router';
 
 import { RadarTodaySection } from '../../../../models/radar-today.model';
-import { RadarThumbComponent } from '../radar-thumb/radar-thumb.component';
+import { RadarContentCardComponent } from '../radar-content-card/radar-content-card.component';
 
 @Component({
   selector: 'app-radar-today-section',
-  imports: [RouterLink, RadarThumbComponent],
+  imports: [RadarContentCardComponent],
   templateUrl: './radar-today-section.component.html',
   styleUrl: './radar-today-section.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

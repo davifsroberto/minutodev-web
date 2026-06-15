@@ -1,0 +1,18 @@
+<a class="radar-card" [routerLink]="['/app/content', item().id]">
+  <span class="radar-card__media">
+    <app-radar-thumb
+      [imageUrl]="item().imageUrl"
+      [sourceName]="item().sourceName"
+    />
+  </span>
+  <span class="radar-card__body">
+    <span class="radar-badge">
+      <span class="radar-badge__icon" aria-hidden="true">{{
+        item().badge.icon
+      }}</span>
+      {{ item().badge.label }}
+    </span>
+    <strong class="radar-card__title">{{ item().title }}</strong>
+    <span class="radar-card__source">{{ item().sourceName }}</span>
+  </span>
+</a>

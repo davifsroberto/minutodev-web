@@ -4,6 +4,7 @@ import {
   provideHttpClientTesting,
 } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 
 import { axe, toHaveNoViolations } from 'jest-axe';
 
@@ -19,11 +20,6 @@ const ENDPOINT = `${environment.apiBaseUrl}/radar/today`;
 // the param-less URL — these tests don't care which day is requested.
 const matchRadar = (req: HttpRequest<unknown>): boolean => req.url === ENDPOINT;
 
-/**
- * Run AXE against the WCAG A/AA rule set. `color-contrast` is disabled because
- * jsdom has no layout engine to compute it (it is guaranteed by the design
- * tokens and must be verified in a real browser); all other AA rules apply.
- */
 const expectNoAxeViolations = async (root: HTMLElement): Promise<void> => {
   document.body.appendChild(root);
   const results = await axe(root, {
@@ -103,31 +99,6 @@ function fullBriefing(): RadarBriefing {
   };
 }
 
-/** Single trend section whose item has a null summary (no description paragraph). */
-function nullDescriptionBriefing(): RadarBriefing {
-  return {
-    date: '2026-06-13',
-    estimatedReadTimeMinutes: 4,
-    sections: [
-      {
-        key: 'trends',
-        items: [
-          {
-            id: 'trend-1',
-            title: 'Tendência sem resumo',
-            summary: null,
-            url: 'https://example.com/no-summary',
-            sourceName: 'Fonte sem resumo',
-            category: null,
-            contentType: 'ARTICLE',
-            publishedAt: '2026-06-13T08:00:00.000Z',
-          },
-        ],
-      },
-    ],
-  };
-}
-
 /** Resolved briefing that maps to zero cards (every section empty). */
 function emptyBriefing(): RadarBriefing {
   return { date: '2026-06-13', estimatedReadTimeMinutes: 3, sections: [] };
@@ -142,7 +113,11 @@ describe('LandingRadarPreviewComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [LandingRadarPreviewComponent],
-      providers: [provideHttpClient(), provideHttpClientTesting()],
+      providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        provideRouter([]),
+      ],
     }).compileComponents();
 
     httpTesting = TestBed.inject(HttpTestingController);
@@ -161,10 +136,11 @@ describe('LandingRadarPreviewComponent', () => {
 
       const el = fixture.nativeElement as HTMLElement;
       expect(
-        el.querySelector('.radar-card__body')?.getAttribute('aria-busy'),
+        el.querySelector('.radar-window__body')?.getAttribute('aria-busy'),
       ).toBe('true');
-      expect(el.querySelector('.radar-item--skeleton')).not.toBeNull();
-      expect(el.querySelectorAll('.radar-item__link')).toHaveLength(0);
+      expect(el.querySelector('.skeleton--highlight')).not.toBeNull();
+      expect(el.querySelectorAll('app-radar-highlight-card')).toHaveLength(0);
+      expect(el.querySelectorAll('app-radar-content-card')).toHaveLength(0);
       expect(el.querySelector('.radar-state')).toBeNull();
       expect(el.querySelector('button')).toBeNull();
     });
@@ -179,41 +155,43 @@ describe('LandingRadarPreviewComponent', () => {
   });
 
   describe('resolved state', () => {
-    it('renders four safe source links with accessible names and visible sources', async () => {
+    it('renders only the highlight (no secondary cards)', async () => {
       const fixture = TestBed.createComponent(LandingRadarPreviewComponent);
       TestBed.tick();
       httpTesting.expectOne(matchRadar).flush(fullBriefing());
       await settle(fixture);
 
       const el = fixture.nativeElement as HTMLElement;
-      const links = el.querySelectorAll<HTMLAnchorElement>('.radar-item__link');
-      expect(links).toHaveLength(4);
 
-      links.forEach((link) => {
-        expect(link.getAttribute('href')).toBeTruthy();
-        expect(link.getAttribute('target')).toBe('_blank');
-        expect(link.getAttribute('rel')).toBe('noopener noreferrer');
-        // Discernible accessible name comes from the link's text content.
-        expect(link.textContent?.trim().length).toBeGreaterThan(0);
-        expect(
-          link.querySelector('.radar-item__source')?.textContent,
-        ).toContain('Fonte:');
-      });
+      expect(el.querySelectorAll('app-radar-highlight-card')).toHaveLength(1);
+      expect(el.querySelectorAll('app-radar-content-card')).toHaveLength(0);
 
-      // Trend is first in display order and gets the brand accent badge.
-      expect(links[0].querySelector('.badge')?.classList).toContain(
-        'badge--brand',
-      );
-      links.forEach((link, index) => {
-        if (index > 0) {
-          expect(link.querySelector('.badge')?.classList).toContain(
-            'badge--neutral',
-          );
-        }
-      });
+      // O destaque é o item mais recente da 1ª seção em ordem de exibição.
+      expect(
+        el.querySelector('app-radar-highlight-card')?.textContent,
+      ).toContain('Signals viram padrão de reatividade');
     });
 
-    it('renders the real read-time and drops the illustrative disclaimer', async () => {
+    it('keeps every click inside minutoDev (briefing route, never the source)', async () => {
+      const fixture = TestBed.createComponent(LandingRadarPreviewComponent);
+      TestBed.tick();
+      httpTesting.expectOne(matchRadar).flush(fullBriefing());
+      await settle(fixture);
+
+      const el = fixture.nativeElement as HTMLElement;
+      const links = Array.from(el.querySelectorAll<HTMLAnchorElement>('a'));
+
+      expect(links.length).toBeGreaterThanOrEqual(1);
+      links.forEach((link) => {
+        expect(link.getAttribute('href')).toMatch(/^\/app\/content\//);
+        // Não abre a fonte externa nem em nova aba.
+        expect(link.getAttribute('target')).toBeNull();
+      });
+      expect(el.querySelector('a[target="_blank"]')).toBeNull();
+      expect(el.querySelector('a[href*="example.com"]')).toBeNull();
+    });
+
+    it('renders the real read-time from the briefing', async () => {
       const fixture = TestBed.createComponent(LandingRadarPreviewComponent);
       TestBed.tick();
       httpTesting.expectOne(matchRadar).flush(fullBriefing());
@@ -221,21 +199,8 @@ describe('LandingRadarPreviewComponent', () => {
 
       const el = fixture.nativeElement as HTMLElement;
       expect(
-        el.querySelector('.radar-card__head .badge')?.textContent,
+        el.querySelector('.radar-window__head .badge')?.textContent,
       ).toContain('Tempo estimado: 6 minutos');
-      expect(el.textContent).not.toContain('Conteúdo ilustrativo');
-      expect(el.textContent).not.toContain('Tempo estimado: 8 minutos');
-    });
-
-    it('omits the description paragraph when the summary is null', async () => {
-      const fixture = TestBed.createComponent(LandingRadarPreviewComponent);
-      TestBed.tick();
-      httpTesting.expectOne(matchRadar).flush(nullDescriptionBriefing());
-      await settle(fixture);
-
-      const el = fixture.nativeElement as HTMLElement;
-      expect(el.querySelectorAll('.radar-item__link')).toHaveLength(1);
-      expect(el.querySelector('.radar-item__description')).toBeNull();
     });
 
     it('passes AXE when resolved', async () => {
@@ -259,7 +224,8 @@ describe('LandingRadarPreviewComponent', () => {
       expect(el.querySelector('.radar-state__message')?.textContent).toContain(
         'Nenhuma novidade no radar hoje',
       );
-      expect(el.querySelectorAll('.radar-item__link')).toHaveLength(0);
+      expect(el.querySelectorAll('app-radar-highlight-card')).toHaveLength(0);
+      expect(el.querySelectorAll('app-radar-content-card')).toHaveLength(0);
       expect(el.querySelector('button')).toBeNull();
     });
 
@@ -289,15 +255,14 @@ describe('LandingRadarPreviewComponent', () => {
       );
       const retry = el.querySelector<HTMLButtonElement>('button');
       expect(retry?.textContent).toContain('Tentar novamente');
-      expect(el.querySelectorAll('.radar-item__link')).toHaveLength(0);
+      expect(el.querySelectorAll('app-radar-highlight-card')).toHaveLength(0);
 
-      // Retry triggers a second request that resolves to live cards.
       retry!.click();
       TestBed.tick();
       httpTesting.expectOne(matchRadar).flush(fullBriefing());
       await settle(fixture);
 
-      expect(el.querySelectorAll('.radar-item__link')).toHaveLength(4);
+      expect(el.querySelectorAll('app-radar-highlight-card')).toHaveLength(1);
       expect(el.querySelector('.radar-state')).toBeNull();
     });
 
