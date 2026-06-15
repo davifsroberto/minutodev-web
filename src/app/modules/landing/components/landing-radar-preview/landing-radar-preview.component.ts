@@ -5,12 +5,12 @@ import {
   inject,
 } from '@angular/core';
 
+import { RadarHighlightCardComponent } from '@app/core/radar/components/radar-highlight-card/radar-highlight-card.component';
 import { RadarService } from '@app/core/radar/radar.service';
-import { RadarHighlightCardComponent } from '@app/modules/radar-app/features/radar-today/components/radar-highlight-card/radar-highlight-card.component';
 import {
   RadarTodayItem,
   toRadarTodaySections,
-} from '@app/modules/radar-app/models/radar-today.model';
+} from '@app/core/radar/radar-view.model';
 
 /**
  * Preview da Home dentro da landing. Reaproveita o card de destaque real do

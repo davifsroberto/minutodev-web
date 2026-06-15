@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { provideRouter, RouterLink } from '@angular/router';
 
-import { RadarTodayItem } from '../../../../models/radar-today.model';
+import { RadarTodayItem } from '@app/core/radar/radar-view.model';
 import { RadarContentCardComponent } from './radar-content-card.component';
 
 const itemFixture: RadarTodayItem = {

@@ -10,7 +10,7 @@ import {
   RADAR_ITEMS_PER_SECTION,
   radarBadgeFor,
   toRadarTodaySections,
-} from './radar-today.model';
+} from './radar-view.model';
 
 function makeItem(overrides: Partial<RadarApiItem> = {}): RadarApiItem {
   return {

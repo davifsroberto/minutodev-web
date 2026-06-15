@@ -4,7 +4,7 @@ import { provideRouter, RouterLink } from '@angular/router';
 
 import { axe, toHaveNoViolations } from 'jest-axe';
 
-import { RadarTodayItem } from '../../../../models/radar-today.model';
+import { RadarTodayItem } from '@app/core/radar/radar-view.model';
 import { RadarHighlightCardComponent } from './radar-highlight-card.component';
 
 expect.extend(toHaveNoViolations);

@@ -7,16 +7,16 @@ import {
 } from '@angular/core';
 
 import { ContentEnrichmentService } from '@app/core/content/content-enrichment.service';
+import { RadarHighlightCardComponent } from '@app/core/radar/components/radar-highlight-card/radar-highlight-card.component';
 import { RadarBriefing } from '@app/core/radar/radar.model';
 import { RadarService } from '@app/core/radar/radar.service';
-import { CLOCK } from '@app/core/time/clock';
-import { LocalDateUtil } from '@app/core/time/local-date.util';
 import {
   RadarTodayItem,
   RadarTodaySection,
   toRadarTodaySections,
-} from '../../models/radar-today.model';
-import { RadarHighlightCardComponent } from './components/radar-highlight-card/radar-highlight-card.component';
+} from '@app/core/radar/radar-view.model';
+import { CLOCK } from '@app/core/time/clock';
+import { LocalDateUtil } from '@app/core/time/local-date.util';
 import { RadarTodaySectionComponent } from './components/radar-today-section/radar-today-section.component';
 
 @Component({

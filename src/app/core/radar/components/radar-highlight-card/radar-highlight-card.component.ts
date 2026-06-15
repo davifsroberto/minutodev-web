@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
-import { RadarTodayItem } from '../../../../models/radar-today.model';
+import { RadarTodayItem } from '@app/core/radar/radar-view.model';
 import { RadarThumbComponent } from '../radar-thumb/radar-thumb.component';
 
 /**
