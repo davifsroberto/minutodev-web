@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 
 import { LandingHeroComponent } from './landing-hero.component';
 
@@ -6,6 +7,7 @@ describe('LandingHeroComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [LandingHeroComponent],
+      providers: [provideRouter([])],
     }).compileComponents();
   });
 
@@ -29,8 +31,8 @@ describe('LandingHeroComponent', () => {
     const primary = el.querySelector<HTMLAnchorElement>('a.btn--primary');
     const secondary = el.querySelector<HTMLAnchorElement>('a.btn--outline');
 
-    expect(primary?.getAttribute('href')).toBe('#lista-de-espera');
-    expect(primary?.textContent?.trim()).toBe('Quero receber o lançamento');
+    expect(primary?.getAttribute('href')).toBe('/app');
+    expect(primary?.textContent?.trim()).toBe('Acessar o Radar');
     expect(secondary?.getAttribute('href')).toBe('#radar');
     expect(secondary?.textContent?.trim()).toBe('Ver exemplo do radar');
   });

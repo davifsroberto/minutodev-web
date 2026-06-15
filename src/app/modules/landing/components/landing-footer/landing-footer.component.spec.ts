@@ -36,12 +36,7 @@ describe('LandingFooterComponent', () => {
     const hrefs = Array.from(nav?.querySelectorAll('a') ?? []).map((a) =>
       a.getAttribute('href'),
     );
-    expect(hrefs).toEqual([
-      '#como-funciona',
-      '#radar',
-      '#publico',
-      '#lista-de-espera',
-    ]);
+    expect(hrefs).toEqual(['#como-funciona', '#radar', '#publico']);
   });
 
   it('renders the small print with the literal year 2026', async () => {

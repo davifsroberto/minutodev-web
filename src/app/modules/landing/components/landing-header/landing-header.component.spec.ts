@@ -73,24 +73,12 @@ describe('LandingHeaderComponent', () => {
     const el = fixture.nativeElement as HTMLElement;
     const cta = getByRole(el, 'link', { name: 'Acessar o Radar' });
     const routerLink = fixture.debugElement
-      .query(By.css('.site-nav__cta'))
+      .query(By.css('.site-header__cta'))
       .injector.get(RouterLink);
 
     expect(cta.getAttribute('href')).toBe('/app');
+    expect(cta.classList.contains('btn--primary')).toBe(true);
     expect(routerLink.href).toBe('/app');
-  });
-
-  it('keeps the waitlist CTA present and unchanged', async () => {
-    const fixture = TestBed.createComponent(LandingHeaderComponent);
-    await fixture.whenStable();
-    const el = fixture.nativeElement as HTMLElement;
-    const waitlistCta = getByRole(el, 'link', {
-      name: 'Quero receber o lançamento',
-    });
-
-    expect(waitlistCta.classList.contains('site-header__cta')).toBe(true);
-    expect(waitlistCta.classList.contains('btn--primary')).toBe(true);
-    expect(waitlistCta.getAttribute('href')).toBe('#lista-de-espera');
   });
 
   it('keeps the Radar app CTA keyboard reachable with a discernible name', async () => {

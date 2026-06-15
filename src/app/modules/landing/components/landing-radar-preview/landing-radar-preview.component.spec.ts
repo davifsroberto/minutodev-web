@@ -200,9 +200,9 @@ describe('LandingRadarPreviewComponent', () => {
         ).toContain('Fonte:');
       });
 
-      // Trend is first in display order and keeps the success accent.
+      // Trend is first in display order and gets the brand accent badge.
       expect(links[0].querySelector('.badge')?.classList).toContain(
-        'badge--success',
+        'badge--brand',
       );
       links.forEach((link, index) => {
         if (index > 0) {

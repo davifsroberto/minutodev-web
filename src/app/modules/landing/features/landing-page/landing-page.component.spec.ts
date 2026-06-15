@@ -6,10 +6,7 @@ import {
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 
-import { of } from 'rxjs';
-
 import { RadarBriefing } from '@app/core/radar/radar.model';
-import { WaitlistService } from '../../services/waitlist.service';
 import { LandingPageComponent } from './landing-page.component';
 
 const EMPTY_BRIEFING: RadarBriefing = {
@@ -19,8 +16,6 @@ const EMPTY_BRIEFING: RadarBriefing = {
 };
 
 describe('LandingPageComponent', () => {
-  const joinMock = jest.fn().mockReturnValue(of(undefined));
-
   /**
    * Create the page, settle the self-fetching radar preview's GET (otherwise
    * the open request keeps the app unstable and `whenStable()` never resolves).
@@ -41,15 +36,12 @@ describe('LandingPageComponent', () => {
   };
 
   beforeEach(async () => {
-    joinMock.mockClear();
-
     await TestBed.configureTestingModule({
       imports: [LandingPageComponent],
       providers: [
         provideHttpClient(),
         provideHttpClientTesting(),
         provideRouter([]),
-        { provide: WaitlistService, useValue: { join: joinMock } },
       ],
     }).compileComponents();
   });
@@ -77,25 +69,11 @@ describe('LandingPageComponent', () => {
     expect(instance['estimatedMinutes']).toBeUndefined();
   });
 
-  it('submits a valid email, calls join() and shows the success message', async () => {
+  it('no longer renders the removed waitlist form', async () => {
     const fixture = await createPage();
 
     const el = fixture.nativeElement as HTMLElement;
-    const input = el.querySelector<HTMLInputElement>('input[type=email]');
-    const form = el.querySelector<HTMLFormElement>('form');
-    expect(input).not.toBeNull();
-    expect(form).not.toBeNull();
-
-    input!.value = 'dev@minutodev.com';
-    input!.dispatchEvent(new Event('input'));
-    await fixture.whenStable();
-
-    form!.dispatchEvent(new Event('submit'));
-    await fixture.whenStable();
-
-    expect(joinMock).toHaveBeenCalledWith({ email: 'dev@minutodev.com' });
-    expect(el.querySelector('.status--success')?.textContent).toContain(
-      'Você está na lista',
-    );
+    expect(el.querySelector('app-waitlist-form')).toBeNull();
+    expect(el.querySelector('input[type=email]')).toBeNull();
   });
 });

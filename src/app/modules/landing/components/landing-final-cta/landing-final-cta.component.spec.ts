@@ -1,26 +1,19 @@
-import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
+import { provideRouter, RouterLink } from '@angular/router';
 
 import { LandingFinalCtaComponent } from './landing-final-cta.component';
-
-const hostTemplate =
-  '<app-landing-final-cta><p class="projected">hi</p></app-landing-final-cta>';
-
-@Component({
-  imports: [LandingFinalCtaComponent],
-  template: hostTemplate,
-})
-class HostComponent {}
 
 describe('LandingFinalCtaComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [HostComponent],
+      imports: [LandingFinalCtaComponent],
+      providers: [provideRouter([])],
     }).compileComponents();
   });
 
   it('renders the section heading', async () => {
-    const fixture = TestBed.createComponent(HostComponent);
+    const fixture = TestBed.createComponent(LandingFinalCtaComponent);
     await fixture.whenStable();
 
     const el = fixture.nativeElement as HTMLElement;
@@ -30,19 +23,23 @@ describe('LandingFinalCtaComponent', () => {
     );
   });
 
-  it('projects the hosted waitlist form content', async () => {
-    const fixture = TestBed.createComponent(HostComponent);
+  it('renders an "Acessar o Radar" CTA linking to /app', async () => {
+    const fixture = TestBed.createComponent(LandingFinalCtaComponent);
     await fixture.whenStable();
 
     const el = fixture.nativeElement as HTMLElement;
-    const projected = el.querySelector('.projected');
+    const cta = el.querySelector<HTMLAnchorElement>('.final-cta__action a');
+    const routerLink = fixture.debugElement
+      .query(By.css('.final-cta__action a'))
+      .injector.get(RouterLink);
 
-    expect(projected).not.toBeNull();
-    expect(projected?.textContent).toBe('hi');
+    expect(cta?.textContent?.trim()).toBe('Acessar o Radar');
+    expect(cta?.getAttribute('href')).toBe('/app');
+    expect(routerLink.href).toBe('/app');
   });
 
   it('links the section to its heading for accessibility', async () => {
-    const fixture = TestBed.createComponent(HostComponent);
+    const fixture = TestBed.createComponent(LandingFinalCtaComponent);
     await fixture.whenStable();
 
     const el = fixture.nativeElement as HTMLElement;
