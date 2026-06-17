@@ -1,129 +1,130 @@
-# Roadmap - minutoDev
+# ROADMAP
 
-## Visão
-
-O minutoDev começa como um radar geral de tecnologia e evolui para uma plataforma personalizada de atualização e aprendizado contínuo para desenvolvedores.
-
----
-
-# V1 - Radar Geral
+# V1 — Radar Inteligente
 
 ## Objetivo
 
-Validar se desenvolvedores possuem interesse em consumir uma curadoria diária de tecnologia em poucos minutos.
+Consumir novidades de tecnologia em poucos minutos através de briefings gerados por IA.
 
-## Funcionalidades
+### Sprint 1 — Ingestão RSS ✅
 
-- Landing page
-- Lista de espera
-- Radar geral de tecnologia
-- Conteúdo coletado automaticamente de fontes públicas
-- Destaques diários
-- Tendências
-- Ferramentas
-- Releases
-- Conteúdos recomendados
+- Sources
+- RSS
+- Coleta de conteúdos
 
-## Não faz parte da V1
+### Sprint 2 — Landing Page ✅
+
+- Landing
+- Apresentação do produto
+
+### Sprint 3 — Radar Diário ✅
+
+- Radar Today
+- Fallback para ontem
+
+### Sprint 4 — Relevância Base ✅
+
+- Score inicial
+- Agrupamento simples
+
+### Sprint 5A — Conteúdo Interno ✅
+
+- Página de conteúdo
+
+### Sprint 5B — Infraestrutura IA ✅
+
+- Providers
+- AiService
+
+### Sprint 5C — Enriquecimento IA ✅
+
+- Tradução
+- Resumos
+
+### Sprint 5D — Experiência Editorial ✅
+
+- Hero
+- Imagens
+- Insight principal
+- Resumo em 30 segundos
+- Home visual
+
+### Sprint 6 — Relevância Inteligente 🔜
+
+- Score avançado
+- Categorias
+- Agrupamento inteligente
+- Destaque do dia
+
+## Entrega da V1
+
+```text
+Landing
+↓
+Radar
+↓
+Briefings IA
+↓
+Relevância Inteligente
+```
+
+---
+
+# V1.1
+
+### Sprint 7 — Favoritos
+
+- Salvar conteúdos
+- Ler depois
+
+### Sprint 8 — Audio Briefing
+
+- Text-to-Speech
+- Ouvir briefing
+
+---
+
+# V1.2
+
+### Sprint 9 — Analytics
+
+- Visualizações
+- Leituras
+- Tempo gasto
+
+---
+
+# V2 — Radar Personalizado
+
+### Sprint 10 — Autenticação
 
 - Login
-- Cadastro de usuário
 - Perfil
-- Personalização
-- Gamificação
-- Aplicativo mobile
-- Inteligência artificial
-- Trilhas de aprendizado
 
-## Métrica de sucesso
-
-- Cadastros na lista de espera
-- Usuários retornando para consultar o radar
-- Feedback qualitativo dos primeiros usuários
-
----
-
-# V2 - Radar Personalizado
-
-## Objetivo
-
-Permitir que cada usuário acompanhe apenas os temas que considera relevantes.
-
-## Funcionalidades
-
-- Cadastro de usuário
-- Escolha de temas
-- Radar personalizado
-- Favoritos
-- Histórico de leitura
-
-## Exemplos de temas
+### Sprint 11 — Interesses
 
 - Angular
-- React
 - IA
 - Cloud
-- DevOps
-- Testes
-- Backend
-- Arquitetura
+- etc.
+
+### Sprint 12 — Feed Personalizado
+
+- Radar para você
+- Score por usuário
+
+### Sprint 13 — Histórico
+
+- Conteúdos lidos
+- Recomendações
 
 ---
 
-# V3 - Aprendizado Contínuo
+# V3 — Aprendizado Contínuo
 
-## Objetivo
+### Sprint 14+
 
-Permitir que o usuário acompanhe novidades e também evolua em temas específicos.
-
-## Funcionalidades
-
-- Modo Monitorar
-- Modo Aprender
-- Conteúdo contínuo por tema
-- Recomendações de estudo
-- Evolução por área de conhecimento
-
----
-
-# V4 - Gamificação
-
-## Objetivo
-
-Aumentar retenção e frequência de uso.
-
-## Funcionalidades
-
-- Streak diário
-- Pontuação
-- Conquistas
-- Metas semanais
-- Progresso de aprendizado
-
----
-
-# V5 - Assistente Inteligente
-
-## Objetivo
-
-Transformar o minutoDev em um copiloto de atualização profissional.
-
-## Funcionalidades
-
-- Recomendações personalizadas
-- Resumos automáticos
-- Radar baseado em interesses
-- Sugestões de carreira
-- Sugestões de aprendizado
-
----
-
-# Ideias futuras
-
-- Aplicativo mobile
-- Extensão para navegador
-- Newsletter automática
-- Integração com GitHub
-- Integração com LinkedIn
-- Dashboard de tendências globais
-- Radar para equipes
+- Trilhas
+- Monitorar tema
+- Aprender tema
+- Evolução por área
