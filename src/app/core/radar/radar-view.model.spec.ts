@@ -37,6 +37,7 @@ function makeSection(
 function makeBriefing(sections: RadarSection[]): RadarBriefing {
   return {
     date: '2026-06-13',
+    featuredId: null,
     sections,
     estimatedReadTimeMinutes: 6,
   };
@@ -104,19 +105,19 @@ describe('toRadarTodaySections', () => {
   });
 
   describe('item ordering', () => {
-    it('sorts a section newest-first by publishedAt descending', () => {
+    it('preserves the relevance order received from the API regardless of publishedAt', () => {
       const briefing = makeBriefing([
         makeSection('trends', [
           makeItem({
-            id: 'oldest',
+            id: 'most-relevant',
             publishedAt: '2026-06-11T08:00:00.000Z',
           }),
           makeItem({
-            id: 'newest',
+            id: 'second-most-relevant',
             publishedAt: '2026-06-13T08:00:00.000Z',
           }),
           makeItem({
-            id: 'middle',
+            id: 'third-most-relevant',
             publishedAt: '2026-06-12T08:00:00.000Z',
           }),
         ]),
@@ -125,40 +126,9 @@ describe('toRadarTodaySections', () => {
       const [section] = toRadarTodaySections(briefing);
 
       expect(section.items.map((item) => item.id)).toEqual([
-        'newest',
-        'middle',
-        'oldest',
-      ]);
-    });
-
-    it('sorts null publishedAt values last and preserves stable order among equal and null dates', () => {
-      const briefing = makeBriefing([
-        makeSection('tools', [
-          makeItem({ id: 'null-a', publishedAt: null }),
-          makeItem({
-            id: 'same-a',
-            publishedAt: '2026-06-13T08:00:00.000Z',
-          }),
-          makeItem({ id: 'null-b', publishedAt: null }),
-          makeItem({
-            id: 'same-b',
-            publishedAt: '2026-06-13T08:00:00.000Z',
-          }),
-          makeItem({
-            id: 'older',
-            publishedAt: '2026-06-12T08:00:00.000Z',
-          }),
-        ]),
-      ]);
-
-      const [section] = toRadarTodaySections(briefing);
-
-      expect(section.items.map((item) => item.id)).toEqual([
-        'same-a',
-        'same-b',
-        'older',
-        'null-a',
-        'null-b',
+        'most-relevant',
+        'second-most-relevant',
+        'third-most-relevant',
       ]);
     });
   });
@@ -270,6 +240,7 @@ describe('toRadarTodaySections', () => {
             url: 'https://example.com/cli',
             sourceName: 'Dev Tools',
             imageUrl: 'https://cdn.test/cli.png',
+            sourceCount: 3,
             category: 'recommended',
           }),
         ]),
@@ -286,9 +257,29 @@ describe('toRadarTodaySections', () => {
           url: 'https://example.com/cli',
           sourceName: 'Dev Tools',
           imageUrl: 'https://cdn.test/cli.png',
+          sourceCount: 3,
           badge: radarBadgeFor('recommended', 'tools'),
         },
       ]);
+    });
+
+    it('propagates sourceCount when present and defaults a missing value to one', () => {
+      const briefing = makeBriefing([
+        makeSection('trends', [
+          makeItem({ id: 'covered', sourceCount: 4 }),
+          makeItem({ id: 'legacy', sourceCount: undefined }),
+        ]),
+      ]);
+
+      const [section] = toRadarTodaySections(briefing);
+      const sourceCountById = Object.fromEntries(
+        section.items.map((item) => [item.id, item.sourceCount]),
+      );
+
+      expect(sourceCountById).toEqual({
+        covered: 4,
+        legacy: 1,
+      });
     });
 
     it('carries imageUrl when present and defaults a missing imageUrl to null', () => {

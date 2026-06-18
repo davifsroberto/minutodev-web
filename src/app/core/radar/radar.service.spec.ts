@@ -21,6 +21,7 @@ const ENDPOINT = `${BASE}?date=${LOCAL_DATE}`;
 function makeBriefing(): RadarBriefing {
   return {
     date: LOCAL_DATE,
+    featuredId: 'trend-1',
     estimatedReadTimeMinutes: 7,
     sections: [
       {

@@ -20,6 +20,7 @@ export interface RadarApiItem {
   // O backend sempre envia (string|null); opcional aqui só para não obrigar
   // fixtures/mocks legados a preenchê-lo. Leia sempre como `imageUrl ?? null`.
   imageUrl?: string | null;
+  sourceCount?: number;
   category: string | null;
   contentType: ContentType;
   publishedAt: string | null;
@@ -32,6 +33,7 @@ export interface RadarSection {
 
 export interface RadarBriefing {
   date: string;
+  featuredId: string | null;
   sections: RadarSection[];
   estimatedReadTimeMinutes: number;
 }

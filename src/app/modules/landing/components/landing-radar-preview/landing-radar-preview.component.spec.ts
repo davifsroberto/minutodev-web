@@ -33,6 +33,7 @@ const expectNoAxeViolations = async (root: HTMLElement): Promise<void> => {
 function fullBriefing(): RadarBriefing {
   return {
     date: '2026-06-13',
+    featuredId: 'trend-1',
     estimatedReadTimeMinutes: 6,
     sections: [
       {
@@ -101,7 +102,12 @@ function fullBriefing(): RadarBriefing {
 
 /** Resolved briefing that maps to zero cards (every section empty). */
 function emptyBriefing(): RadarBriefing {
-  return { date: '2026-06-13', estimatedReadTimeMinutes: 3, sections: [] };
+  return {
+    date: '2026-06-13',
+    featuredId: null,
+    estimatedReadTimeMinutes: 3,
+    sections: [],
+  };
 }
 
 describe('LandingRadarPreviewComponent', () => {

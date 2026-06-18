@@ -12,6 +12,11 @@
       }}</span>
       {{ item().badge.label }}
     </span>
+    @if (item().sourceCount > 1) {
+      <span class="radar-coverage-badge">
+        Coberto por {{ item().sourceCount }} fontes
+      </span>
+    }
     <strong class="radar-card__title">{{ item().title }}</strong>
     <span class="radar-card__source">{{ item().sourceName }}</span>
   </span>

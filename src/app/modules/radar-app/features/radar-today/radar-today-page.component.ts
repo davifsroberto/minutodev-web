@@ -52,13 +52,20 @@ export class RadarTodayPageComponent {
     return briefing ? toRadarTodaySections(briefing) : [];
   });
 
-  /**
-   * Destaque do dia: maior score ou, sem score (caso atual), o primeiro item da
-   * primeira seção em ordem de exibição. Renderizado fora das listas.
-   */
-  readonly highlight = computed<RadarTodayItem | null>(
-    () => this.sections()[0]?.items[0] ?? null,
-  );
+  /** Destaque editorial da API, com fallback para o primeiro item disponível. */
+  readonly highlight = computed<RadarTodayItem | null>(() => {
+    const sections = this.sections();
+    const featuredId = this.briefing()?.featuredId;
+
+    if (featuredId) {
+      for (const section of sections) {
+        const featured = section.items.find((item) => item.id === featuredId);
+        if (featured) return featured;
+      }
+    }
+
+    return sections[0]?.items[0] ?? null;
+  });
 
   /** Seções sem o item em destaque, para não duplicá-lo na grade. */
   readonly displaySections = computed<RadarTodaySection[]>(() => {

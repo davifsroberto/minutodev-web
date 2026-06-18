@@ -14,6 +14,12 @@
       {{ item().badge.label }}
     </span>
 
+    @if (item().sourceCount > 1) {
+      <span class="radar-coverage-badge">
+        Coberto por {{ item().sourceCount }} fontes
+      </span>
+    }
+
     <strong class="radar-highlight__title">{{ item().title }}</strong>
 
     @if (item().summary; as summary) {

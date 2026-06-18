@@ -17,6 +17,7 @@ export interface RadarTodayItem {
   sourceName: string;
   url: string;
   imageUrl: string | null;
+  sourceCount: number;
   badge: RadarBadge;
 }
 
@@ -97,9 +98,7 @@ export function toRadarTodaySections(
   const sections: RadarTodaySection[] = [];
 
   for (const sectionKey of RADAR_APP_DISPLAY_ORDER) {
-    const items =
-      sectionsByKey.get(sectionKey)?.items.slice().sort(compareNewestFirst) ??
-      [];
+    const items = sectionsByKey.get(sectionKey)?.items ?? [];
     const cappedItems = items
       .slice(0, cap)
       .map((item) => toRadarTodayItem(item, sectionKey));
@@ -116,14 +115,6 @@ export function toRadarTodaySections(
   return sections;
 }
 
-function compareNewestFirst(current: RadarApiItem, next: RadarApiItem): number {
-  if (current.publishedAt === next.publishedAt) return 0;
-  if (current.publishedAt === null) return 1;
-  if (next.publishedAt === null) return -1;
-
-  return Date.parse(next.publishedAt) - Date.parse(current.publishedAt);
-}
-
 function toRadarTodayItem(
   item: RadarApiItem,
   sectionKey: RadarSectionKey,
@@ -135,6 +126,7 @@ function toRadarTodayItem(
     sourceName: item.sourceName,
     url: item.url,
     imageUrl: item.imageUrl ?? null,
+    sourceCount: item.sourceCount ?? 1,
     badge: radarBadgeFor(item.category, sectionKey),
   };
 }

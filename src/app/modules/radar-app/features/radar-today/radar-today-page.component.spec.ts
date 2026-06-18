@@ -29,9 +29,10 @@ const expectNoAxeViolations = async (root: HTMLElement): Promise<void> => {
   expect(results).toHaveNoViolations();
 };
 
-function fullBriefing(): RadarBriefing {
+function fullBriefing(featuredId: string | null = 'tool-2'): RadarBriefing {
   return {
     date: '2026-06-13',
+    featuredId,
     estimatedReadTimeMinutes: 7,
     sections: [
       {
@@ -114,6 +115,7 @@ function fallbackBriefing(): RadarBriefing {
 function emptyBriefing(): RadarBriefing {
   return {
     date: '2026-06-13',
+    featuredId: null,
     estimatedReadTimeMinutes: 2,
     sections: [
       { key: 'trends', items: [] },
@@ -205,6 +207,7 @@ describe('RadarTodayPageComponent', () => {
       httpTesting.expectOne(matchRadar).flush(fullBriefing());
       await settle(fixture);
 
+      const component = fixture.componentInstance;
       const el = fixture.nativeElement as HTMLElement;
       const headings = Array.from(
         el.querySelectorAll<HTMLHeadingElement>('.radar-section__title'),
@@ -215,16 +218,52 @@ describe('RadarTodayPageComponent', () => {
       expect(el.textContent).toContain('5 conteúdos');
       expect(headings).toEqual(['Tendências', 'Ferramentas', 'Releases']);
 
-      // O destaque é o item mais recente da 1ª seção, exibido fora das listas.
+      // O destaque editorial pode estar fora da primeira seção/posição.
       const highlight = el.querySelector('app-radar-highlight-card');
       expect(highlight?.textContent).toContain(
-        'Signals se consolidam em frameworks web',
+        'Bundler nativo estabiliza plugin API',
       );
+      expect(component.highlight()?.id).toBe('tool-2');
 
       // 5 itens no total; 1 vira destaque, restando 4 cards nas listas.
       expect(el.querySelectorAll('.radar-card')).toHaveLength(4);
+      expect(
+        component
+          .displaySections()
+          .flatMap((section) => section.items)
+          .map((item) => item.id),
+      ).toEqual(['trend-1', 'trend-2', 'tool-1', 'release-1']);
       expect(el.querySelector('.radar-state')).toBeNull();
     });
+
+    it.each([
+      ['null', null],
+      ['unknown', 'missing-featured'],
+    ])(
+      'falls back to the first item when featuredId is %s',
+      async (_caseName, featuredId) => {
+        const fixture = TestBed.createComponent(RadarTodayPageComponent);
+        TestBed.tick();
+        httpTesting.expectOne(matchRadar).flush(fullBriefing(featuredId));
+        await settle(fixture);
+
+        const component = fixture.componentInstance;
+        expect(component.highlight()?.id).toBe('trend-1');
+        expect(
+          component
+            .displaySections()
+            .flatMap((section) => section.items)
+            .some((item) => item.id === 'trend-1'),
+        ).toBe(false);
+
+        const highlight = (fixture.nativeElement as HTMLElement).querySelector(
+          'app-radar-highlight-card',
+        );
+        expect(highlight?.textContent).toContain(
+          'Signals se consolidam em frameworks web',
+        );
+      },
+    );
 
     it('passes AXE when resolved', async () => {
       const fixture = TestBed.createComponent(RadarTodayPageComponent);
@@ -241,9 +280,8 @@ describe('RadarTodayPageComponent', () => {
       httpTesting.expectOne(matchRadar).flush(fullBriefing());
       await settle(fixture);
 
-      // o destaque é o item mais recente da 1ª seção (trend-1)
       const warm = httpTesting.expectOne(
-        `${environment.apiBaseUrl}/contents/trend-1/enrichment`,
+        `${environment.apiBaseUrl}/contents/tool-2/enrichment`,
       );
       expect(warm.request.method).toBe('GET');
       warm.flush({});

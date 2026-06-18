@@ -2,8 +2,12 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { provideRouter, RouterLink } from '@angular/router';
 
+import { axe, toHaveNoViolations } from 'jest-axe';
+
 import { RadarTodayItem } from '@app/core/radar/radar-view.model';
 import { RadarContentCardComponent } from './radar-content-card.component';
+
+expect.extend(toHaveNoViolations);
 
 const itemFixture: RadarTodayItem = {
   id: 'content-1',
@@ -12,6 +16,7 @@ const itemFixture: RadarTodayItem = {
   sourceName: 'Engineering Daily',
   url: 'https://example.com/signals',
   imageUrl: 'https://cdn.test/signals.png',
+  sourceCount: 1,
   badge: { icon: '🔥', label: 'Tendência' },
 };
 
@@ -66,5 +71,33 @@ describe('RadarContentCardComponent', () => {
     expect(anchor.getAttribute('href')).toBe('/app/content/content-1');
     expect(routerLink.href).toBe('/app/content/content-1');
     expect(anchor.getAttribute('target')).toBeNull();
+  });
+
+  it('renders the coverage badge when multiple sources cover the item', () => {
+    const el = createComponent({ ...itemFixture, sourceCount: 3 })
+      .nativeElement as HTMLElement;
+    const coverageBadge = el.querySelector('.radar-coverage-badge');
+
+    expect(coverageBadge?.textContent?.trim()).toBe('Coberto por 3 fontes');
+    expect(coverageBadge?.getAttribute('aria-hidden')).toBeNull();
+  });
+
+  it('omits the coverage badge for a single-source item', () => {
+    const el = createComponent().nativeElement as HTMLElement;
+
+    expect(el.querySelector('.radar-coverage-badge')).toBeNull();
+  });
+
+  it('passes automated AXE checks with the coverage badge present', async () => {
+    const root = createComponent({ ...itemFixture, sourceCount: 3 })
+      .nativeElement as HTMLElement;
+    document.body.appendChild(root);
+    const results = await axe(root, {
+      runOnly: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'],
+      rules: { 'color-contrast': { enabled: false } },
+    });
+    root.remove();
+
+    expect(results).toHaveNoViolations();
   });
 });

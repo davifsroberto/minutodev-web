@@ -11,6 +11,7 @@ import { LandingPageComponent } from './landing-page.component';
 
 const EMPTY_BRIEFING: RadarBriefing = {
   date: '2026-06-13',
+  featuredId: null,
   estimatedReadTimeMinutes: 0,
   sections: [],
 };
