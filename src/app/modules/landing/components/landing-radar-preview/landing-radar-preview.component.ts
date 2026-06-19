@@ -9,6 +9,7 @@ import { RadarHighlightCardComponent } from '@app/core/radar/components/radar-hi
 import { RadarService } from '@app/core/radar/radar.service';
 import {
   RadarTodayItem,
+  resolveHighlight,
   toRadarTodaySections,
 } from '@app/core/radar/radar-view.model';
 
@@ -36,8 +37,8 @@ export class LandingRadarPreviewComponent {
     return briefing ? toRadarTodaySections(briefing) : [];
   });
 
-  readonly highlight = computed<RadarTodayItem | null>(
-    () => this.sections()[0]?.items[0] ?? null,
+  readonly highlight = computed<RadarTodayItem | null>(() =>
+    resolveHighlight(this.sections(), this.briefing()?.featuredId ?? null),
   );
 
   readonly estimatedMinutes = computed(

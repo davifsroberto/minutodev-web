@@ -172,7 +172,6 @@ describe('LandingRadarPreviewComponent', () => {
       expect(el.querySelectorAll('app-radar-highlight-card')).toHaveLength(1);
       expect(el.querySelectorAll('app-radar-content-card')).toHaveLength(0);
 
-      // O destaque é o item mais recente da 1ª seção em ordem de exibição.
       expect(
         el.querySelector('app-radar-highlight-card')?.textContent,
       ).toContain('Signals viram padrão de reatividade');
@@ -216,6 +215,43 @@ describe('LandingRadarPreviewComponent', () => {
       await settle(fixture);
 
       await expectNoAxeViolations(fixture.nativeElement as HTMLElement);
+    });
+  });
+
+  describe('featured highlight (parity with the Radar)', () => {
+    it('shows the featuredId item even when it is not the first available (gap proof)', async () => {
+      const fixture = TestBed.createComponent(LandingRadarPreviewComponent);
+      TestBed.tick();
+      httpTesting
+        .expectOne(matchRadar)
+        .flush({ ...fullBriefing(), featuredId: 'tool-1' });
+      await settle(fixture);
+
+      const el = fixture.nativeElement as HTMLElement;
+      const card = el.querySelector('app-radar-highlight-card');
+
+      expect(el.querySelectorAll('app-radar-highlight-card')).toHaveLength(1);
+      expect(card?.textContent).toContain('Bundler nativo ganha tração');
+      expect(card?.textContent).not.toContain(
+        'Signals viram padrão de reatividade',
+      );
+      expect(card?.querySelector('a')?.getAttribute('href')).toBe(
+        '/app/content/tool-1',
+      );
+    });
+
+    it('falls back to the first available item when featuredId is null', async () => {
+      const fixture = TestBed.createComponent(LandingRadarPreviewComponent);
+      TestBed.tick();
+      httpTesting
+        .expectOne(matchRadar)
+        .flush({ ...fullBriefing(), featuredId: null });
+      await settle(fixture);
+
+      const el = fixture.nativeElement as HTMLElement;
+      expect(
+        el.querySelector('app-radar-highlight-card')?.textContent,
+      ).toContain('Signals viram padrão de reatividade');
     });
   });
 

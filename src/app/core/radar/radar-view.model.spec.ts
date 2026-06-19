@@ -9,6 +9,8 @@ import {
   RADAR_APP_SECTION_LABELS,
   RADAR_ITEMS_PER_SECTION,
   radarBadgeFor,
+  RadarTodaySection,
+  resolveHighlight,
   toRadarTodaySections,
 } from './radar-view.model';
 
@@ -130,6 +132,62 @@ describe('toRadarTodaySections', () => {
         'second-most-relevant',
         'third-most-relevant',
       ]);
+    });
+  });
+
+  describe('relevance ordering guard (6A.2 — no local re-sort)', () => {
+    it('keeps the exact API order within a section, even when it matches no sort key', () => {
+      const apiOrder = ['mid', 'oldest', 'newest'];
+      const briefing = makeBriefing([
+        makeSection('trends', [
+          makeItem({
+            id: 'mid',
+            title: 'Mango',
+            publishedAt: '2026-06-12T08:00:00.000Z',
+          }),
+          makeItem({
+            id: 'oldest',
+            title: 'Apple',
+            publishedAt: '2026-06-10T08:00:00.000Z',
+          }),
+          makeItem({
+            id: 'newest',
+            title: 'Zebra',
+            publishedAt: '2026-06-14T08:00:00.000Z',
+          }),
+        ]),
+      ]);
+
+      const produced = toRadarTodaySections(briefing)[0].items.map(
+        (item) => item.id,
+      );
+
+      expect(produced).toEqual(apiOrder);
+      expect(produced).not.toEqual(['newest', 'mid', 'oldest']);
+      expect(produced).not.toEqual([...apiOrder].sort());
+    });
+
+    it('keeps each section item order independent, with no global re-sort by date', () => {
+      const briefing = makeBriefing([
+        makeSection('trends', [
+          makeItem({ id: 't1', publishedAt: '2026-06-09T08:00:00.000Z' }),
+          makeItem({ id: 't2', publishedAt: '2026-06-15T08:00:00.000Z' }),
+        ]),
+        makeSection('recommended', [
+          makeItem({ id: 'r1', publishedAt: '2026-06-08T08:00:00.000Z' }),
+          makeItem({ id: 'r2', publishedAt: '2026-06-20T08:00:00.000Z' }),
+        ]),
+      ]);
+
+      const orderByKey = Object.fromEntries(
+        toRadarTodaySections(briefing).map((section) => [
+          section.key,
+          section.items.map((item) => item.id),
+        ]),
+      );
+
+      expect(orderByKey['trends']).toEqual(['t1', 't2']);
+      expect(orderByKey['recommended']).toEqual(['r1', 'r2']);
     });
   });
 
@@ -352,6 +410,55 @@ describe('radarBadgeFor', () => {
   it('is case- and accent-insensitive on the category', () => {
     expect(radarBadgeFor('AI', 'tools').label).toBe('IA');
     expect(radarBadgeFor('Segurança', 'releases').label).toBe('Segurança');
+    expect(radarBadgeFor('Engineering', 'tools')).toEqual({
+      icon: '⚙️',
+      label: 'Engenharia',
+    });
+  });
+
+  it('maps each real API category to its curated badge', () => {
+    expect(radarBadgeFor('ai', 'tools')).toEqual({ icon: '🤖', label: 'IA' });
+    expect(radarBadgeFor('ia', 'tools')).toEqual({ icon: '🤖', label: 'IA' });
+    expect(radarBadgeFor('engineering', 'releases')).toEqual({
+      icon: '⚙️',
+      label: 'Engenharia',
+    });
+    expect(radarBadgeFor('community', 'trends')).toEqual({
+      icon: '💬',
+      label: 'Comunidade',
+    });
+    expect(radarBadgeFor('opensource', 'tools')).toEqual({
+      icon: '🔓',
+      label: 'Open Source',
+    });
+    expect(radarBadgeFor('frontend', 'recommended')).toEqual({
+      icon: '🎨',
+      label: 'Frontend',
+    });
+  });
+
+  it('keeps every seeded category distinct from the section fallback (drift guard)', () => {
+    const seededCategories = [
+      'ai',
+      'engineering',
+      'community',
+      'opensource',
+      'frontend',
+    ];
+    const sectionKeys: RadarSectionKey[] = [
+      'trends',
+      'recommended',
+      'tools',
+      'releases',
+    ];
+
+    for (const category of seededCategories) {
+      for (const key of sectionKeys) {
+        expect(radarBadgeFor(category, key).label).not.toBe(
+          radarBadgeFor(null, key).label,
+        );
+      }
+    }
   });
 
   it('falls back to the section badge when no topical category matches', () => {
@@ -364,5 +471,57 @@ describe('radarBadgeFor', () => {
   it('always provides a non-empty icon', () => {
     expect(radarBadgeFor('ai', 'tools').icon.length).toBeGreaterThan(0);
     expect(radarBadgeFor(null, 'trends').icon.length).toBeGreaterThan(0);
+  });
+});
+
+describe('resolveHighlight', () => {
+  function makeSections(): RadarTodaySection[] {
+    return toRadarTodaySections(
+      makeBriefing([
+        makeSection('trends', [
+          makeItem({ id: 'trend-1' }),
+          makeItem({ id: 'trend-2' }),
+        ]),
+        makeSection('recommended', [
+          makeItem({ id: 'rec-1' }),
+          makeItem({ id: 'rec-2' }),
+        ]),
+      ]),
+    );
+  }
+
+  it('returns the featured item when featuredId matches an item in the first section', () => {
+    expect(resolveHighlight(makeSections(), 'trend-1')?.id).toBe('trend-1');
+  });
+
+  it('returns a featured item from a later section instead of the positional first', () => {
+    expect(resolveHighlight(makeSections(), 'rec-2')?.id).toBe('rec-2');
+  });
+
+  it('falls back to the first item of the first section when featuredId is null', () => {
+    expect(resolveHighlight(makeSections(), null)?.id).toBe('trend-1');
+  });
+
+  it('falls back to the first item when featuredId is an empty string', () => {
+    expect(resolveHighlight(makeSections(), '')?.id).toBe('trend-1');
+  });
+
+  it('falls back to the first item when featuredId matches no item', () => {
+    expect(resolveHighlight(makeSections(), 'missing')?.id).toBe('trend-1');
+  });
+
+  it('returns null when there are no sections', () => {
+    expect(resolveHighlight([], 'anything')).toBeNull();
+    expect(resolveHighlight([], null)).toBeNull();
+  });
+
+  it('returns null when sections are present but contain no items', () => {
+    const emptySections: RadarTodaySection[] = [
+      { key: 'trends', label: 'Tendências', items: [] },
+      { key: 'recommended', label: 'Recomendados', items: [] },
+    ];
+
+    expect(resolveHighlight(emptySections, null)).toBeNull();
+    expect(resolveHighlight(emptySections, 'trend-1')).toBeNull();
   });
 });

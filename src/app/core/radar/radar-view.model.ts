@@ -65,6 +65,10 @@ const SECTION_BADGE: Record<RadarSectionKey, RadarBadge> = {
 const TOPIC_BADGE: Record<string, RadarBadge> = {
   ai: { icon: '🤖', label: 'IA' },
   ia: { icon: '🤖', label: 'IA' },
+  engineering: { icon: '⚙️', label: 'Engenharia' },
+  community: { icon: '💬', label: 'Comunidade' },
+  opensource: { icon: '🔓', label: 'Open Source' },
+  frontend: { icon: '🎨', label: 'Frontend' },
   cloud: { icon: '☁️', label: 'Cloud' },
   security: { icon: '🔒', label: 'Segurança' },
   seguranca: { icon: '🔒', label: 'Segurança' },
@@ -113,6 +117,20 @@ export function toRadarTodaySections(
   }
 
   return sections;
+}
+
+export function resolveHighlight(
+  sections: RadarTodaySection[],
+  featuredId: string | null,
+): RadarTodayItem | null {
+  if (featuredId) {
+    for (const section of sections) {
+      const featured = section.items.find((item) => item.id === featuredId);
+      if (featured) return featured;
+    }
+  }
+
+  return sections[0]?.items[0] ?? null;
 }
 
 function toRadarTodayItem(
