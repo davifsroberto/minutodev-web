@@ -1,0 +1,73 @@
+:host {
+  display: inline-flex;
+  align-items: center;
+}
+
+.auth-menu {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.auth-menu__avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid var(--color-border);
+}
+
+.auth-menu__name {
+  font-weight: 500;
+  color: var(--color-text);
+  max-width: 14ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Controle neutro do cabeçalho: mesma altura (40px) e tratamento do toggle de
+   tema, formando um grupo coeso. Só o CTA gradiente "Acessar o Radar" recebe
+   destaque. */
+.auth-menu__ghost {
+  height: 40px;
+  padding: 0 14px;
+  gap: var(--space-2);
+  background-color: transparent;
+  color: var(--color-text);
+  border-color: var(--color-border);
+  font-weight: 600;
+}
+
+.auth-menu__ghost:hover {
+  background-color: var(--color-surface-subtle);
+  border-color: var(--color-border-soft);
+  color: var(--color-text);
+}
+
+.auth-menu__google {
+  display: block;
+  flex-shrink: 0;
+  color: var(--color-text-secondary);
+}
+
+/* Em telas estreitas (onde o menu já colapsa) o login vira um ícone 40x40,
+   idêntico em forma ao toggle de tema; o aria-label preserva a acessibilidade. */
+@media (max-width: 768px) {
+  .auth-menu__login-label {
+    display: none;
+  }
+
+  .auth-menu__login {
+    width: 40px;
+    padding: 0;
+    justify-content: center;
+  }
+}
+
+/* O nome ocupa espaço demais no mobile; o avatar + Sair bastam. */
+@media (max-width: 600px) {
+  .auth-menu__name {
+    display: none;
+  }
+}

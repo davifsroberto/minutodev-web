@@ -15,7 +15,12 @@
 .app-shell__bar-inner {
   display: flex;
   align-items: center;
+  gap: var(--space-4);
   min-height: var(--header-height);
+}
+
+.app-shell__account {
+  margin-left: auto;
 }
 
 .app-shell__brand {

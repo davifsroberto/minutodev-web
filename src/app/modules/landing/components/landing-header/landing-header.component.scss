@@ -55,6 +55,19 @@
   margin-left: auto;
 }
 
+/* CTA da barra: mesma altura (40px) dos demais controles, alinhado. No mobile
+   ele sai da barra (que ficaria apertada) e reaparece dentro do menu. */
+.site-header__cta {
+  display: none;
+  height: 40px;
+  padding: 0 18px;
+}
+
+/* CTA dentro do menu dropdown (apenas mobile). */
+.site-nav__cta {
+  margin-top: var(--space-4);
+}
+
 .menu-toggle {
   display: inline-flex;
   align-items: center;
@@ -94,6 +107,15 @@
 
 @media (min-width: 768px) {
   .menu-toggle {
+    display: none;
+  }
+
+  /* No desktop o CTA volta para a barra e some do menu. */
+  .site-header__cta {
+    display: inline-flex;
+  }
+
+  .site-nav__cta {
     display: none;
   }
 

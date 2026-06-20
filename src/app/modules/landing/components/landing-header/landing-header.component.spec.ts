@@ -2,7 +2,6 @@ import { TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { provideRouter, RouterLink } from '@angular/router';
 
-import { getByRole } from '@testing-library/dom';
 import userEvent from '@testing-library/user-event';
 import { axe, toHaveNoViolations } from 'jest-axe';
 
@@ -71,13 +70,16 @@ describe('LandingHeaderComponent', () => {
     const fixture = TestBed.createComponent(LandingHeaderComponent);
     await fixture.whenStable();
     const el = fixture.nativeElement as HTMLElement;
-    const cta = getByRole(el, 'link', { name: 'Acessar o Radar' });
+    // O CTA aparece em dois locais (barra no desktop, menu no mobile); a barra
+    // é o alvo estável aqui.
+    const cta = el.querySelector<HTMLAnchorElement>('.site-header__cta');
     const routerLink = fixture.debugElement
       .query(By.css('.site-header__cta'))
       .injector.get(RouterLink);
 
-    expect(cta.getAttribute('href')).toBe('/app');
-    expect(cta.classList.contains('btn--primary')).toBe(true);
+    expect(cta?.textContent).toContain('Acessar o Radar');
+    expect(cta?.getAttribute('href')).toBe('/app');
+    expect(cta?.classList.contains('btn--primary')).toBe(true);
     expect(routerLink.href).toBe('/app');
   });
 
@@ -86,9 +88,10 @@ describe('LandingHeaderComponent', () => {
     await fixture.whenStable();
     const el = fixture.nativeElement as HTMLElement;
     document.body.appendChild(el);
-    const cta = getByRole(el, 'link', { name: 'Acessar o Radar' });
+    const cta = el.querySelector<HTMLAnchorElement>('.site-header__cta');
     const user = userEvent.setup();
 
+    expect(cta).not.toBeNull();
     while (document.activeElement !== cta) {
       await user.tab();
     }

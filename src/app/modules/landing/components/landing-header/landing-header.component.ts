@@ -6,11 +6,12 @@ import {
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
+import { AuthMenuComponent } from '../../../../core/auth/components/auth-menu/auth-menu.component';
 import { ThemeToggleComponent } from '../../../../core/theme/theme-toggle.component';
 
 @Component({
   selector: 'app-landing-header',
-  imports: [RouterLink, ThemeToggleComponent],
+  imports: [RouterLink, ThemeToggleComponent, AuthMenuComponent],
   templateUrl: './landing-header.component.html',
   styleUrl: './landing-header.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

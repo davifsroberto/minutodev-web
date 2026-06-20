@@ -1,3 +1,4 @@
+import { provideHttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
@@ -34,7 +35,7 @@ describe('AppShellComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [AppShellComponent],
-      providers: [provideRouter([])],
+      providers: [provideRouter([]), provideHttpClient()],
     }).compileComponents();
   });
 
@@ -82,6 +83,7 @@ describe('AppShellComponent routing', () => {
     await TestBed.configureTestingModule({
       imports: [AppShellComponent, RoutedChildStubComponent],
       providers: [
+        provideHttpClient(),
         provideRouter([
           {
             path: '',

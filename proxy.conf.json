@@ -1,0 +1,17 @@
+{
+  "/auth": {
+    "target": "http://localhost:3500",
+    "secure": false,
+    "changeOrigin": false
+  },
+  "/radar": {
+    "target": "http://localhost:3500",
+    "secure": false,
+    "changeOrigin": false
+  },
+  "/contents": {
+    "target": "http://localhost:3500",
+    "secure": false,
+    "changeOrigin": false
+  }
+}
