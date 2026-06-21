@@ -1,0 +1,97 @@
+<section class="prefs-page" aria-labelledby="prefs-title">
+  <div class="container prefs-page__inner">
+    <header class="prefs-page__header">
+      <p class="eyebrow">Preferências</p>
+      <h2 id="prefs-title">Seus interesses</h2>
+      <p class="prefs-page__subtitle">
+        Escolha os temas que você quer acompanhar. Sem nenhum selecionado, você
+        continua vendo o Radar Geral.
+      </p>
+    </header>
+
+    <div class="prefs-page__body">
+      <div
+        class="prefs-page__loadstate"
+        role="status"
+        aria-live="polite"
+        [attr.aria-busy]="loading() ? 'true' : null"
+      >
+        @if (loading()) {
+          <p class="visually-hidden">Carregando suas preferências.</p>
+          <ul class="prefs-skeleton" aria-hidden="true">
+            @for (item of skeleton; track item) {
+              <li class="prefs-skeleton__chip"></li>
+            }
+          </ul>
+        } @else if (loadError()) {
+          <div class="prefs-state prefs-state--error" tabindex="-1">
+            <p class="prefs-state__message">
+              Não foi possível carregar suas preferências. Tente novamente mais
+              tarde.
+            </p>
+            <button type="button" class="btn btn--outline" (click)="retry()">
+              Tentar novamente
+            </button>
+          </div>
+        }
+      </div>
+
+      @if (ready()) {
+        <form class="prefs-form" (submit)="onSubmit($event)">
+          <fieldset class="prefs-form__fieldset">
+            <legend class="prefs-form__legend">
+              Temas disponíveis
+              <span class="prefs-form__count"
+                >({{ selectedCount() }} selecionados)</span
+              >
+            </legend>
+
+            <ul class="prefs-form__list">
+              @for (topic of catalog.value(); track topic.slug) {
+                <li>
+                  <label class="prefs-check">
+                    <input
+                      class="prefs-check__input"
+                      type="checkbox"
+                      [value]="topic.slug"
+                      [checked]="isChecked(topic.slug)"
+                      (change)="onToggle(topic.slug, $event)"
+                    />
+                    <span class="prefs-check__label">{{ topic.label }}</span>
+                  </label>
+                </li>
+              }
+            </ul>
+          </fieldset>
+
+          <div class="prefs-form__actions">
+            <button
+              type="submit"
+              class="btn btn--primary"
+              [disabled]="saving()"
+            >
+              {{ saving() ? 'Salvando…' : 'Salvar preferências' }}
+            </button>
+
+            @if (saved()) {
+              <p
+                class="prefs-form__feedback prefs-form__feedback--ok"
+                role="status"
+              >
+                Preferências salvas.
+              </p>
+            }
+            @if (saveError()) {
+              <p
+                class="prefs-form__feedback prefs-form__feedback--error"
+                role="alert"
+              >
+                Não foi possível salvar agora. Tente novamente.
+              </p>
+            }
+          </div>
+        </form>
+      }
+    </div>
+  </div>
+</section>

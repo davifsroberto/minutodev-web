@@ -1,5 +1,6 @@
 import { signal, WritableSignal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 
 import { AuthStatus, AuthUser } from '../../auth.model';
 import { AuthService } from '../../auth.service';
@@ -16,6 +17,7 @@ describe('AuthMenuComponent', () => {
     await TestBed.configureTestingModule({
       imports: [AuthMenuComponent],
       providers: [
+        provideRouter([]),
         {
           provide: AuthService,
           useValue: { status, user, isAuthenticated, login, logout },
@@ -73,6 +75,10 @@ describe('AuthMenuComponent', () => {
     expect(el.querySelector<HTMLImageElement>('.auth-menu__avatar')?.src).toBe(
       'https://cdn.example.test/ana.png',
     );
+
+    const prefsLink = el.querySelector<HTMLAnchorElement>('.auth-menu__prefs');
+    expect(prefsLink?.textContent).toContain('Preferências');
+    expect(prefsLink?.getAttribute('href')).toBe('/app/preferences');
 
     const logoutButton =
       el.querySelector<HTMLButtonElement>('.auth-menu__logout');

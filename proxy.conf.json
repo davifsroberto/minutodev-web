@@ -13,5 +13,15 @@
     "target": "http://localhost:3500",
     "secure": false,
     "changeOrigin": false
+  },
+  "/me": {
+    "target": "http://localhost:3500",
+    "secure": false,
+    "changeOrigin": false
+  },
+  "/interests": {
+    "target": "http://localhost:3500",
+    "secure": false,
+    "changeOrigin": false
   }
 }

@@ -6,6 +6,7 @@ import { RouterTestingHarness } from '@angular/router/testing';
 
 import { axe, toHaveNoViolations } from 'jest-axe';
 
+import { authGuard } from '../../../core/auth/auth.guard';
 import { ContentDetailPageComponent } from '../features/content-detail/content-detail-page.component';
 import { RadarTodayPageComponent } from '../features/radar-today/radar-today-page.component';
 import { radarAppRoutes } from '../radar-app.routes';
@@ -108,15 +109,33 @@ describe('AppShellComponent routing', () => {
 });
 
 describe('radarAppRoutes', () => {
-  it('exposes the shell as a parent route with Radar de Hoje and the content detail as children', () => {
+  it('exposes the shell as a parent route with radar, preferences (guarded) and content detail as children', () => {
     expect(radarAppRoutes).toHaveLength(1);
     expect(radarAppRoutes[0]).toMatchObject({
       path: '',
       component: AppShellComponent,
     });
-    expect(radarAppRoutes[0]?.children).toEqual([
-      { path: '', component: RadarTodayPageComponent },
-      { path: 'content/:id', component: ContentDetailPageComponent },
+
+    const children = radarAppRoutes[0]?.children ?? [];
+    expect(children.map((route) => route.path)).toEqual([
+      '',
+      'preferences',
+      'content/:id',
     ]);
+
+    expect(children[0]).toMatchObject({
+      path: '',
+      component: RadarTodayPageComponent,
+    });
+
+    // Preferências é lazy e protegida pelo authGuard.
+    expect(children[1]?.path).toBe('preferences');
+    expect(children[1]?.canActivate).toEqual([authGuard]);
+    expect(typeof children[1]?.loadComponent).toBe('function');
+
+    expect(children[2]).toMatchObject({
+      path: 'content/:id',
+      component: ContentDetailPageComponent,
+    });
   });
 });
