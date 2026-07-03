@@ -3,32 +3,173 @@
   align-items: center;
 }
 
-.auth-menu {
+.user-menu {
+  position: relative;
   display: inline-flex;
-  align-items: center;
-  gap: var(--space-3);
 }
 
-.auth-menu__avatar {
-  width: 32px;
-  height: 32px;
+/* Gatilho: só o avatar, com anel sutil que acende no hover/foco. */
+.user-menu__trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
+  transition: box-shadow 0.15s ease;
+}
+
+.user-menu__trigger:hover,
+.user-menu__trigger[aria-expanded='true'] {
+  box-shadow: 0 0 0 2px var(--color-brand);
+}
+
+.user-menu__trigger:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 2px;
+}
+
+.user-menu__avatar {
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   object-fit: cover;
   border: 1px solid var(--color-border);
 }
 
-.auth-menu__name {
-  font-weight: 500;
-  color: var(--color-text);
-  max-width: 14ch;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+.user-menu__initials {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(
+    135deg,
+    var(--color-brand-dark),
+    var(--color-brand)
+  );
+  color: #fff;
+  font-size: var(--fs-small);
+  font-weight: 700;
+  letter-spacing: 0.02em;
 }
 
-/* Controle neutro do cabeçalho: mesma altura (40px) e tratamento do toggle de
-   tema, formando um grupo coeso. Só o CTA gradiente "Acessar o Radar" recebe
-   destaque. */
+/* O anchor cobre o vão entre o avatar e o cartão para o hover não "vazar"
+   ao atravessar o espaço (senão o pointerleave fecharia o menu no caminho). */
+.user-menu__anchor {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  z-index: 30;
+  padding-top: var(--space-2);
+}
+
+.user-menu__panel {
+  min-width: 230px;
+  padding: var(--space-2);
+  display: grid;
+  gap: 2px;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow:
+    0 12px 32px rgb(0 0 0 / 0.28),
+    0 2px 8px rgb(0 0 0 / 0.16);
+  transform-origin: top right;
+  animation: user-menu-pop 0.14s ease-out;
+}
+
+.user-menu__identity {
+  padding: var(--space-2) var(--space-3) var(--space-3);
+  margin-bottom: var(--space-1);
+  border-bottom: 1px solid var(--color-border);
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.user-menu__name {
+  margin: 0;
+  font-weight: 600;
+  color: var(--color-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.user-menu__email {
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-size: var(--fs-small);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.user-menu__item {
+  display: block;
+  width: 100%;
+  padding: var(--space-2) var(--space-3);
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-text);
+  font: inherit;
+  font-weight: 500;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background-color 0.12s ease,
+    color 0.12s ease;
+}
+
+.user-menu__item:hover {
+  background-color: var(--color-surface-subtle);
+}
+
+.user-menu__item:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: -2px;
+}
+
+.user-menu__item--signout {
+  margin-top: var(--space-1);
+  border-top: 1px solid var(--color-border);
+  border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+  padding-top: var(--space-3);
+  color: var(--color-text-secondary);
+}
+
+.user-menu__item--signout:hover {
+  background-color: var(--color-surface-subtle);
+  color: var(--color-danger);
+}
+
+@keyframes user-menu-pop {
+  from {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .user-menu__panel {
+    animation: none;
+  }
+}
+
+/* Botão de login (visitante) — mantém o tratamento neutro do cabeçalho. */
 .auth-menu__ghost {
   height: 40px;
   padding: 0 14px;
@@ -62,12 +203,5 @@
     width: 40px;
     padding: 0;
     justify-content: center;
-  }
-}
-
-/* O nome ocupa espaço demais no mobile; o avatar + Sair bastam. */
-@media (max-width: 600px) {
-  .auth-menu__name {
-    display: none;
   }
 }

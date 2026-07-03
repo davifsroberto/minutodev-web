@@ -25,6 +25,15 @@ export const radarAppRoutes: Routes = [
       },
 
       {
+        path: 'history',
+        loadComponent: () =>
+          import('./features/history/history-page.component').then(
+            (m) => m.HistoryPageComponent,
+          ),
+        canActivate: [authGuard],
+      },
+
+      {
         path: 'content/:id',
         component: ContentDetailPageComponent,
       },

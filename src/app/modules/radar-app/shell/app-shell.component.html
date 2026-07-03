@@ -3,8 +3,21 @@
 <header class="app-shell__bar" aria-label="Barra superior do aplicativo">
   <div class="container app-shell__bar-inner">
     <h1 class="app-shell__brand" aria-label="minutoDev">
-      minuto<span class="app-shell__brand-accent">Dev</span>
+      <a class="app-shell__brand-link" routerLink="/app">
+        minuto<span class="app-shell__brand-accent">Dev</span>
+      </a>
     </h1>
+
+    <nav class="app-shell__nav" aria-label="Navegação principal">
+      <a
+        class="app-shell__radar-link"
+        routerLink="/app"
+        routerLinkActive="app-shell__radar-link--active"
+        [routerLinkActiveOptions]="{ exact: true }"
+      >
+        Radar
+      </a>
+    </nav>
 
     <app-auth-menu class="app-shell__account" />
   </div>

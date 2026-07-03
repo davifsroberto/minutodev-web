@@ -10,7 +10,9 @@ import { RouterTestingHarness } from '@angular/router/testing';
 import { axe, toHaveNoViolations } from 'jest-axe';
 
 import { environment } from '@environments/environment';
+import { AuthService } from '@app/core/auth/auth.service';
 import { ContentEnrichment } from '@app/core/content/content-enrichment.model';
+import { HistoryEntry } from '@app/core/history/history.model';
 import { ContentDetailPageComponent } from './content-detail-page.component';
 
 expect.extend(toHaveNoViolations);
@@ -339,5 +341,149 @@ describe('ContentDetailPageComponent', () => {
     harness.detectChanges();
 
     await expectNoAxeViolations(rootOf(harness));
+  });
+
+  describe('histórico de leitura', () => {
+    const OPEN_URL = `${environment.apiBaseUrl}/me/history/contents/content-1/open`;
+    const READ_URL = `${environment.apiBaseUrl}/me/history/contents/content-1/read`;
+    const AUTH_ME_URL = `${environment.apiBaseUrl}/auth/me`;
+
+    const makeEntry = (
+      overrides: Partial<HistoryEntry> = {},
+    ): HistoryEntry => ({
+      contentId: 'content-1',
+      firstOpenedAt: '2026-07-03T10:00:00.000Z',
+      lastOpenedAt: '2026-07-03T10:00:00.000Z',
+      readAt: null,
+      openCount: 1,
+      status: 'OPENED',
+      ...overrides,
+    });
+
+    const signIn = async (): Promise<void> => {
+      const auth = TestBed.inject(AuthService);
+      const refresh = auth.refresh();
+      httpTesting.expectOne(AUTH_ME_URL).flush({
+        id: 'user-1',
+        email: 'dev@example.test',
+        name: 'Dev Teste',
+        avatarUrl: null,
+      });
+      await refresh;
+    };
+
+    const stayAnonymous = async (): Promise<void> => {
+      const auth = TestBed.inject(AuthService);
+      const refresh = auth.refresh();
+      httpTesting
+        .expectOne(AUTH_ME_URL)
+        .flush('sem sessão', { status: 401, statusText: 'Unauthorized' });
+      await refresh;
+    };
+
+    it('registra a abertura no histórico quando autenticado', async () => {
+      await signIn();
+
+      const harness = await navigate();
+      TestBed.tick();
+
+      const open = httpTesting.expectOne(OPEN_URL);
+      expect(open.request.method).toBe('POST');
+      open.flush(makeEntry());
+
+      httpTesting.expectOne(ENDPOINT).flush(makeEnrichment());
+      await harness.fixture.whenStable();
+      harness.detectChanges();
+
+      expect(rootOf(harness).textContent).toContain('Marcar como lido');
+    });
+
+    it('não chama o histórico para visitante anônimo (comportamento atual)', async () => {
+      await stayAnonymous();
+
+      const harness = await navigate();
+      TestBed.tick();
+
+      httpTesting.expectNone(OPEN_URL);
+      httpTesting.expectOne(ENDPOINT).flush(makeEnrichment());
+      await harness.fixture.whenStable();
+      harness.detectChanges();
+
+      expect(rootOf(harness).textContent).not.toContain('Marcar como lido');
+    });
+
+    it('marca como lido pelo botão e troca para o estado "Lido"', async () => {
+      await signIn();
+
+      const harness = await navigate();
+      TestBed.tick();
+      httpTesting.expectOne(OPEN_URL).flush(makeEntry());
+      httpTesting.expectOne(ENDPOINT).flush(makeEnrichment());
+      await harness.fixture.whenStable();
+      harness.detectChanges();
+
+      const el = rootOf(harness);
+      el.querySelector<HTMLButtonElement>('.content-read__button')?.click();
+
+      const read = httpTesting.expectOne(READ_URL);
+      expect(read.request.method).toBe('POST');
+      read.flush(
+        makeEntry({ readAt: '2026-07-03T10:05:00.000Z', status: 'READ' }),
+      );
+      await harness.fixture.whenStable();
+      harness.detectChanges();
+
+      expect(el.querySelector('.content-read__button')).toBeNull();
+      expect(el.querySelector('.content-read__done')?.textContent).toContain(
+        'Lido',
+      );
+    });
+
+    it('mostra "Lido" direto quando o briefing já estava lido', async () => {
+      await signIn();
+
+      const harness = await navigate();
+      TestBed.tick();
+      httpTesting.expectOne(OPEN_URL).flush(
+        makeEntry({
+          readAt: '2026-07-01T08:00:00.000Z',
+          status: 'READ',
+          openCount: 3,
+        }),
+      );
+      httpTesting.expectOne(ENDPOINT).flush(makeEnrichment());
+      await harness.fixture.whenStable();
+      harness.detectChanges();
+
+      const el = rootOf(harness);
+      expect(el.querySelector('.content-read__button')).toBeNull();
+      expect(el.querySelector('.content-read__done')?.textContent).toContain(
+        'Lido',
+      );
+    });
+
+    it('mantém o botão e avisa quando o marcar como lido falha', async () => {
+      await signIn();
+
+      const harness = await navigate();
+      TestBed.tick();
+      httpTesting.expectOne(OPEN_URL).flush(makeEntry());
+      httpTesting.expectOne(ENDPOINT).flush(makeEnrichment());
+      await harness.fixture.whenStable();
+      harness.detectChanges();
+
+      const el = rootOf(harness);
+      el.querySelector<HTMLButtonElement>('.content-read__button')?.click();
+      httpTesting
+        .expectOne(READ_URL)
+        .flush('erro', { status: 500, statusText: 'Internal Server Error' });
+      await harness.fixture.whenStable();
+      harness.detectChanges();
+
+      expect(el.querySelector('.content-read__button')).not.toBeNull();
+      expect(el.querySelector('.content-read__error')?.textContent).toContain(
+        'Não foi possível marcar agora',
+      );
+    });
   });
 });

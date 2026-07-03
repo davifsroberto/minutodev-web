@@ -54,6 +54,23 @@ describe('AppShellComponent', () => {
     expect(brand?.textContent).toContain('Dev');
   });
 
+  it('offers a way back to the radar: brand and "Radar" link point to /app', async () => {
+    const fixture = TestBed.createComponent(AppShellComponent);
+    await fixture.whenStable();
+
+    const el = fixture.nativeElement as HTMLElement;
+    const brandLink = el.querySelector<HTMLAnchorElement>(
+      '.app-shell__brand-link',
+    );
+    const radarLink = el.querySelector<HTMLAnchorElement>(
+      '.app-shell__radar-link',
+    );
+
+    expect(brandLink?.getAttribute('href')).toBe('/app');
+    expect(radarLink?.getAttribute('href')).toBe('/app');
+    expect(radarLink?.textContent).toContain('Radar');
+  });
+
   it('does not render landing chrome, marketing navigation, or waitlist markup', async () => {
     const fixture = TestBed.createComponent(AppShellComponent);
     await fixture.whenStable();
@@ -109,7 +126,7 @@ describe('AppShellComponent routing', () => {
 });
 
 describe('radarAppRoutes', () => {
-  it('exposes the shell as a parent route with radar, preferences (guarded) and content detail as children', () => {
+  it('exposes the shell as a parent route with radar, preferences and history (guarded) and content detail as children', () => {
     expect(radarAppRoutes).toHaveLength(1);
     expect(radarAppRoutes[0]).toMatchObject({
       path: '',
@@ -120,6 +137,7 @@ describe('radarAppRoutes', () => {
     expect(children.map((route) => route.path)).toEqual([
       '',
       'preferences',
+      'history',
       'content/:id',
     ]);
 
@@ -133,7 +151,12 @@ describe('radarAppRoutes', () => {
     expect(children[1]?.canActivate).toEqual([authGuard]);
     expect(typeof children[1]?.loadComponent).toBe('function');
 
-    expect(children[2]).toMatchObject({
+    // Histórico segue o mesmo padrão: lazy e restrito a sessão ativa.
+    expect(children[2]?.path).toBe('history');
+    expect(children[2]?.canActivate).toEqual([authGuard]);
+    expect(typeof children[2]?.loadComponent).toBe('function');
+
+    expect(children[3]).toMatchObject({
       path: 'content/:id',
       component: ContentDetailPageComponent,
     });

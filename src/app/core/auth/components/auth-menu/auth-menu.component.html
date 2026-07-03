@@ -1,29 +1,72 @@
 @if (isAuthenticated() && user(); as currentUser) {
-  <div class="auth-menu" aria-label="Conta">
-    @if (currentUser.avatarUrl) {
-      <img
-        class="auth-menu__avatar"
-        [src]="currentUser.avatarUrl"
-        [alt]="currentUser.name"
-        width="32"
-        height="32"
-        referrerpolicy="no-referrer"
-      />
-    }
-    <span class="auth-menu__name">{{ currentUser.name }}</span>
-    <a
-      class="btn auth-menu__ghost auth-menu__prefs"
-      routerLink="/app/preferences"
-    >
-      Preferências
-    </a>
+  <div
+    class="user-menu"
+    (pointerenter)="onHoverStart($event)"
+    (pointerleave)="onHoverEnd($event)"
+  >
     <button
+      #trigger
       type="button"
-      class="btn auth-menu__ghost auth-menu__logout"
-      (click)="logout()"
+      class="user-menu__trigger"
+      aria-haspopup="menu"
+      aria-controls="auth-user-menu"
+      [attr.aria-expanded]="open()"
+      [attr.aria-label]="'Menu da conta de ' + currentUser.name"
+      (click)="toggleMenu()"
     >
-      Sair
+      @if (currentUser.avatarUrl && !avatarBroken()) {
+        <img
+          class="user-menu__avatar"
+          [src]="currentUser.avatarUrl"
+          alt=""
+          width="36"
+          height="36"
+          referrerpolicy="no-referrer"
+          (error)="onAvatarError()"
+        />
+      } @else {
+        <span class="user-menu__initials" aria-hidden="true">
+          {{ initials() }}
+        </span>
+      }
     </button>
+
+    @if (open()) {
+      <div class="user-menu__anchor">
+        <div id="auth-user-menu" class="user-menu__panel" role="menu">
+          <div class="user-menu__identity">
+            <p class="user-menu__name">{{ currentUser.name }}</p>
+            <p class="user-menu__email">{{ currentUser.email }}</p>
+          </div>
+
+          <a
+            class="user-menu__item"
+            role="menuitem"
+            routerLink="/app/history"
+            (click)="closeMenu()"
+          >
+            Histórico
+          </a>
+          <a
+            class="user-menu__item"
+            role="menuitem"
+            routerLink="/app/preferences"
+            (click)="closeMenu()"
+          >
+            Preferências
+          </a>
+
+          <button
+            type="button"
+            class="user-menu__item user-menu__item--signout"
+            role="menuitem"
+            (click)="logout()"
+          >
+            Sair
+          </button>
+        </div>
+      </div>
+    }
   </div>
 } @else if (status() === 'anonymous') {
   <button

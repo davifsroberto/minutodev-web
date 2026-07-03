@@ -1,0 +1,88 @@
+<section class="history-page" aria-labelledby="history-title">
+  <div class="container history-page__inner">
+    <header class="history-page__header">
+      <p class="eyebrow">Histórico</p>
+      <h2 id="history-title">Sua leitura</h2>
+      <p class="history-page__subtitle">
+        Conteúdos que você abriu ou marcou como lidos, do mais recente ao mais
+        antigo.
+      </p>
+    </header>
+
+    <div class="history-page__body">
+      <div
+        class="history-page__loadstate"
+        role="status"
+        aria-live="polite"
+        [attr.aria-busy]="loading() ? 'true' : null"
+      >
+        @if (loading()) {
+          <p class="visually-hidden">Carregando seu histórico.</p>
+          <ul class="history-skeleton" aria-hidden="true">
+            @for (item of skeleton; track item) {
+              <li class="history-skeleton__row"></li>
+            }
+          </ul>
+        } @else if (loadError()) {
+          <div class="history-state history-state--error" tabindex="-1">
+            <p class="history-state__message">
+              Não foi possível carregar seu histórico. Tente novamente mais
+              tarde.
+            </p>
+            <button type="button" class="btn btn--outline" (click)="retry()">
+              Tentar novamente
+            </button>
+          </div>
+        }
+      </div>
+
+      @if (isEmpty()) {
+        <div class="history-state">
+          <p class="history-state__message">
+            Você ainda não acessou nenhum conteúdo. Explore o radar para
+            começar.
+          </p>
+          <a class="btn btn--primary" routerLink="/app">Ir para o radar</a>
+        </div>
+      }
+
+      @if (items().length) {
+        <ul class="history-list">
+          @for (item of items(); track item.contentId) {
+            <li>
+              <a
+                class="history-item"
+                [routerLink]="['/app/content', item.contentId]"
+              >
+                <span class="history-item__media">
+                  <app-radar-thumb
+                    [imageUrl]="item.imageUrl"
+                    [sourceName]="item.sourceName"
+                  />
+                </span>
+                <span class="history-item__body">
+                  <strong class="history-item__title">{{ item.title }}</strong>
+                  <span class="history-item__meta">
+                    <span class="history-item__source">{{
+                      item.sourceName
+                    }}</span>
+                    @if (openedLabel(item); as opened) {
+                      <span aria-hidden="true">·</span>
+                      <span>Último acesso em {{ opened }}</span>
+                    }
+                  </span>
+                </span>
+                <span
+                  class="history-item__badge"
+                  [class.history-item__badge--read]="item.status === 'READ'"
+                >
+                  {{ item.status === 'READ' ? 'Lido' : 'Aberto' }}
+                </span>
+              </a>
+            </li>
+          }
+        </ul>
+      }
+    </div>
+  </div>
+</section>

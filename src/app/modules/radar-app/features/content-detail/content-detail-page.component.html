@@ -197,6 +197,30 @@
             </section>
           }
 
+          @if (canMarkRead() || isRead()) {
+            <div class="content-read">
+              @if (isRead()) {
+                <p class="content-read__done" role="status">
+                  <span aria-hidden="true">✓</span> Lido
+                </p>
+              } @else {
+                <button
+                  type="button"
+                  class="btn btn--outline content-read__button"
+                  [disabled]="markingRead()"
+                  (click)="markAsRead()"
+                >
+                  {{ markingRead() ? 'Marcando…' : 'Marcar como lido' }}
+                </button>
+                @if (markReadError()) {
+                  <p class="content-read__error" role="alert">
+                    Não foi possível marcar agora. Tente novamente.
+                  </p>
+                }
+              }
+            </div>
+          }
+
           <footer class="content-source">
             <p class="content-source__label">
               Conteúdo baseado na fonte original:
