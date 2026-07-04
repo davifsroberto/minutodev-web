@@ -3,6 +3,7 @@ import {
   HttpTestingController,
   provideHttpClientTesting,
 } from '@angular/common/http/testing';
+import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter, Route, Router } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
@@ -10,6 +11,7 @@ import { RouterTestingHarness } from '@angular/router/testing';
 import { axe, toHaveNoViolations } from 'jest-axe';
 
 import { environment } from '@environments/environment';
+import { AuthService } from '@app/core/auth/auth.service';
 import { RadarBriefing } from '@app/core/radar/radar.model';
 import { CLOCK } from '@app/core/time/clock';
 import { routes } from 'src/app/app.routes';
@@ -74,6 +76,19 @@ describe('app routing integration', () => {
         {
           provide: CLOCK,
           useValue: () => new Date(2026, 5, 13, 9, 0, 0),
+        },
+        // Sessão anônima estável: o radar reativo fica em /radar/today e o
+        // AuthMenu do shell renderiza o ramo anônimo (sem a chamada a /auth/me
+        // do AuthService real, que deixaria o resource ocioso em `loading`).
+        {
+          provide: AuthService,
+          useValue: {
+            status: signal('anonymous'),
+            user: signal(null),
+            isAuthenticated: () => false,
+            login: () => undefined,
+            logout: () => Promise.resolve(),
+          },
         },
       ],
     }).compileComponents();

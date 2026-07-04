@@ -3,12 +3,14 @@ import {
   HttpTestingController,
   provideHttpClientTesting,
 } from '@angular/common/http/testing';
+import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 
 import { axe, toHaveNoViolations } from 'jest-axe';
 
 import { environment } from '@environments/environment';
+import { AuthService } from '@app/core/auth/auth.service';
 import { RadarBriefing } from '@app/core/radar/radar.model';
 import { CLOCK } from '@app/core/time/clock';
 import { LandingRadarPreviewComponent } from '@app/modules/landing/components/landing-radar-preview/landing-radar-preview.component';
@@ -130,6 +132,9 @@ describe('radar acceptance demo (contract fixtures) — 6A.1/6A.2/6A.3/6A.5', ()
         provideHttpClientTesting(),
         provideRouter([]),
         { provide: CLOCK, useValue: () => new Date(2026, 5, 13, 9, 0, 0) },
+        // Sessão anônima estável: o RadarService reativo fica em /radar/today
+        // (com o AuthService real, `loading` deixaria o resource ocioso).
+        { provide: AuthService, useValue: { status: signal('anonymous') } },
       ],
     }).compileComponents();
 
