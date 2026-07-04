@@ -317,8 +317,33 @@ describe('toRadarTodaySections', () => {
           imageUrl: 'https://cdn.test/cli.png',
           sourceCount: 3,
           badge: radarBadgeFor('recommended', 'tools'),
+          read: false,
         },
       ]);
+    });
+
+    it('derives read from viewerState, defaulting to false when absent', () => {
+      const briefing = makeBriefing([
+        makeSection('trends', [
+          makeItem({ id: 'lido', viewerState: { opened: true, read: true } }),
+          makeItem({
+            id: 'aberto',
+            viewerState: { opened: true, read: false },
+          }),
+          makeItem({ id: 'sem-estado' }),
+        ]),
+      ]);
+
+      const [section] = toRadarTodaySections(briefing);
+      const readById = Object.fromEntries(
+        section.items.map((item) => [item.id, item.read]),
+      );
+
+      expect(readById).toEqual({
+        lido: true,
+        aberto: false,
+        'sem-estado': false,
+      });
     });
 
     it('propagates sourceCount when present and defaults a missing value to one', () => {

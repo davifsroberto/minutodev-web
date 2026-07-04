@@ -110,6 +110,28 @@
   line-height: 1.4;
 }
 
+/* Selo discreto de "já lido" (Sprint 13C-B): mesma escala dos demais badges,
+   em tom secundário para não competir com o conteúdo. */
+.radar-read-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  justify-self: start;
+  padding: 0.15rem var(--space-2);
+  color: var(--color-text-secondary);
+  background-color: var(--color-surface-subtle);
+  border-radius: var(--radius-pill);
+  font-family: var(--font-mono);
+  font-size: var(--fs-small);
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.radar-read-badge__icon {
+  font-size: 0.95em;
+  line-height: 1;
+}
+
 /* Em telas largas o destaque fica lado a lado: imagem à esquerda, texto à direita. */
 @media (min-width: 48rem) {
   .radar-highlight {

@@ -18,6 +18,7 @@ const itemFixture: RadarTodayItem = {
   imageUrl: 'https://cdn.test/signals.png',
   sourceCount: 1,
   badge: { icon: '🔥', label: 'Tendência' },
+  read: false,
 };
 
 function createComponent(
@@ -93,8 +94,38 @@ describe('RadarHighlightCardComponent', () => {
     expect(el.querySelector('.radar-coverage-badge')).toBeNull();
   });
 
+  it('shows the "Lido" badge on the highlight only when the item is read', () => {
+    const read = createComponent({ ...itemFixture, read: true })
+      .nativeElement as HTMLElement;
+    const badge = read.querySelector('.radar-read-badge');
+
+    expect(badge?.textContent?.trim()).toBe('✓ Lido');
+    expect(
+      badge
+        ?.querySelector('.radar-read-badge__icon')
+        ?.getAttribute('aria-hidden'),
+    ).toBe('true');
+
+    const unread = createComponent({ ...itemFixture, read: false })
+      .nativeElement as HTMLElement;
+    expect(unread.querySelector('.radar-read-badge')).toBeNull();
+  });
+
   it('passes automated AXE checks with the coverage badge present', async () => {
     const root = createComponent({ ...itemFixture, sourceCount: 4 })
+      .nativeElement as HTMLElement;
+    document.body.appendChild(root);
+    const results = await axe(root, {
+      runOnly: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'],
+      rules: { 'color-contrast': { enabled: false } },
+    });
+    root.remove();
+
+    expect(results).toHaveNoViolations();
+  });
+
+  it('passes automated AXE checks with the "Lido" badge present', async () => {
+    const root = createComponent({ ...itemFixture, read: true })
       .nativeElement as HTMLElement;
     document.body.appendChild(root);
     const results = await axe(root, {

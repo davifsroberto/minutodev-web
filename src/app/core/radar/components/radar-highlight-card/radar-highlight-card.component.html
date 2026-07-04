@@ -20,6 +20,12 @@
       </span>
     }
 
+    @if (item().read) {
+      <span class="radar-read-badge">
+        <span class="radar-read-badge__icon" aria-hidden="true">✓</span> Lido
+      </span>
+    }
+
     <strong class="radar-highlight__title">{{ item().title }}</strong>
 
     @if (item().summary; as summary) {

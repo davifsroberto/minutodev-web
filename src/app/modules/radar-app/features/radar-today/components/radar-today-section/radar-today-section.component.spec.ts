@@ -31,6 +31,7 @@ const sectionFixture: RadarTodaySection = {
       url: 'https://example.com/signals',
       imageUrl: 'https://cdn.test/signals.png',
       badge: { icon: '🔥', label: 'Tendência' },
+      read: false,
     },
     {
       id: 'trend-2',
@@ -40,6 +41,7 @@ const sectionFixture: RadarTodaySection = {
       url: 'https://example.com/runtime',
       imageUrl: null,
       badge: { icon: '🤖', label: 'IA' },
+      read: false,
     },
   ],
 };

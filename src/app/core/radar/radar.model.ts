@@ -11,6 +11,12 @@ export type ContentType =
   | 'DISCUSSION'
   | 'REPOSITORY';
 
+/** Estado de leitura do usuário — presente apenas no `GET /radar/for-you`. */
+export interface RadarViewerState {
+  opened: boolean;
+  read: boolean;
+}
+
 export interface RadarApiItem {
   id: string;
   title: string;
@@ -24,6 +30,8 @@ export interface RadarApiItem {
   category: string | null;
   contentType: ContentType;
   publishedAt: string | null;
+  // Só no `/radar/for-you` (autenticado); ausente no `/radar/today`.
+  viewerState?: RadarViewerState;
 }
 
 export interface RadarSection {

@@ -17,6 +17,11 @@
         Coberto por {{ item().sourceCount }} fontes
       </span>
     }
+    @if (item().read) {
+      <span class="radar-read-badge">
+        <span class="radar-read-badge__icon" aria-hidden="true">✓</span> Lido
+      </span>
+    }
     <strong class="radar-card__title">{{ item().title }}</strong>
     <span class="radar-card__source">{{ item().sourceName }}</span>
   </span>

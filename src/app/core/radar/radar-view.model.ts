@@ -19,6 +19,9 @@ export interface RadarTodayItem {
   imageUrl: string | null;
   sourceCount: number;
   badge: RadarBadge;
+  // True quando o for-you marcou o conteúdo como lido; false no radar geral,
+  // anônimo ou fallback (onde `viewerState` não vem no payload).
+  read: boolean;
 }
 
 export interface RadarTodaySection {
@@ -146,5 +149,6 @@ function toRadarTodayItem(
     imageUrl: item.imageUrl ?? null,
     sourceCount: item.sourceCount ?? 1,
     badge: radarBadgeFor(item.category, sectionKey),
+    read: item.viewerState?.read ?? false,
   };
 }

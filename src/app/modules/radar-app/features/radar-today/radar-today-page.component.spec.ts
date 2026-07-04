@@ -588,4 +588,97 @@ describe('RadarTodayPageComponent', () => {
       await expectNoAxeViolations(fixture.nativeElement as HTMLElement);
     });
   });
+
+  describe('selo "Lido" (13C-B)', () => {
+    // Marca alguns ids como lidos, preservando a ordem/estrutura da API.
+    const forYouWithRead = (readIds: string[]): RadarBriefing => {
+      const briefing = fullBriefing();
+      return {
+        ...briefing,
+        personalized: true,
+        personalizationFallback: false,
+        sections: briefing.sections.map((section) => ({
+          ...section,
+          items: section.items.map((item) =>
+            readIds.includes(item.id)
+              ? { ...item, viewerState: { opened: true, read: true } }
+              : { ...item, viewerState: { opened: false, read: false } },
+          ),
+        })),
+      };
+    };
+
+    it('exibe o selo no destaque e nos cards de seção quando read é true', async () => {
+      authStatus.set('authenticated');
+      const fixture = TestBed.createComponent(RadarTodayPageComponent);
+      TestBed.tick();
+
+      // tool-2 é o destaque (featuredId); trend-1 é um card de seção.
+      httpTesting
+        .expectOne(matchForYou)
+        .flush(forYouWithRead(['tool-2', 'trend-1']));
+      await settle(fixture);
+
+      const el = fixture.nativeElement as HTMLElement;
+      const highlight = el.querySelector('app-radar-highlight-card');
+      expect(highlight?.querySelector('.radar-read-badge')).not.toBeNull();
+      // Um selo no destaque + um no card de seção = 2 no total.
+      expect(el.querySelectorAll('.radar-read-badge')).toHaveLength(2);
+      const badge = el.querySelector('.radar-read-badge');
+      expect(badge?.textContent?.trim()).toBe('✓ Lido');
+    });
+
+    it('não exibe selo quando nenhum item está lido', async () => {
+      authStatus.set('authenticated');
+      const fixture = TestBed.createComponent(RadarTodayPageComponent);
+      TestBed.tick();
+
+      httpTesting.expectOne(matchForYou).flush(forYouWithRead([]));
+      await settle(fixture);
+
+      const el = fixture.nativeElement as HTMLElement;
+      expect(el.querySelector('.radar-read-badge')).toBeNull();
+    });
+
+    it('não exibe selo no radar geral/anônimo (sem viewerState no payload)', async () => {
+      const fixture = TestBed.createComponent(RadarTodayPageComponent);
+      TestBed.tick();
+
+      httpTesting.expectOne(matchRadar).flush(fullBriefing());
+      await settle(fixture);
+
+      const el = fixture.nativeElement as HTMLElement;
+      expect(el.querySelector('.radar-read-badge')).toBeNull();
+    });
+
+    it('não reordena: a ordem dos cards é a mesma com ou sem itens lidos', async () => {
+      authStatus.set('authenticated');
+      const fixture = TestBed.createComponent(RadarTodayPageComponent);
+      TestBed.tick();
+
+      httpTesting.expectOne(matchForYou).flush(forYouWithRead(['trend-1']));
+      await settle(fixture);
+
+      // A ordem exibida segue a da API, independente do estado de leitura.
+      expect(
+        fixture.componentInstance
+          .sections()
+          .flatMap((section) => section.items)
+          .map((item) => item.id),
+      ).toEqual(['trend-1', 'trend-2', 'tool-1', 'tool-2', 'release-1']);
+    });
+
+    it('passa no AXE com o selo "Lido" presente', async () => {
+      authStatus.set('authenticated');
+      const fixture = TestBed.createComponent(RadarTodayPageComponent);
+      TestBed.tick();
+
+      httpTesting
+        .expectOne(matchForYou)
+        .flush(forYouWithRead(['tool-2', 'trend-1']));
+      await settle(fixture);
+
+      await expectNoAxeViolations(fixture.nativeElement as HTMLElement);
+    });
+  });
 });
