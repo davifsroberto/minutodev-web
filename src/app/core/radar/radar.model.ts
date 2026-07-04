@@ -36,4 +36,7 @@ export interface RadarBriefing {
   featuredId: string | null;
   sections: RadarSection[];
   estimatedReadTimeMinutes: number;
+  // Presentes apenas no `GET /radar/for-you`; o radar geral não os envia.
+  personalized?: boolean;
+  personalizationFallback?: boolean;
 }

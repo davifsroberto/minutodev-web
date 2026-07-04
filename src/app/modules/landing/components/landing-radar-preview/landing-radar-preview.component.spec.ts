@@ -3,12 +3,14 @@ import {
   HttpTestingController,
   provideHttpClientTesting,
 } from '@angular/common/http/testing';
+import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 
 import { axe, toHaveNoViolations } from 'jest-axe';
 
 import { environment } from '@environments/environment';
+import { AuthService } from '@app/core/auth/auth.service';
 import { RadarBriefing } from '@app/core/radar/radar.model';
 import { LandingRadarPreviewComponent } from './landing-radar-preview.component';
 
@@ -123,6 +125,20 @@ describe('LandingRadarPreviewComponent', () => {
         provideHttpClient(),
         provideHttpClientTesting(),
         provideRouter([]),
+        // Sessão anônima estável: o RadarService reativo fica em /radar/today
+        // (com o AuthService real, `loading` deixaria o resource ocioso). O
+        // mock cobre também a superfície usada pelo AuthMenu, caso a árvore
+        // renderizada o inclua.
+        {
+          provide: AuthService,
+          useValue: {
+            status: signal('anonymous'),
+            user: signal(null),
+            isAuthenticated: () => false,
+            login: () => undefined,
+            logout: () => Promise.resolve(),
+          },
+        },
       ],
     }).compileComponents();
 

@@ -19,6 +19,18 @@
             {{ totalCount() }} conteúdos
           </li>
         </ul>
+
+        @if (personalized()) {
+          <p class="radar-page__personalized">
+            <span aria-hidden="true">✦</span> Baseado nos seus interesses
+          </p>
+        } @else if (needsInterests()) {
+          <p class="radar-page__interests-cta">
+            <a routerLink="/app/preferences">
+              Escolha seus interesses para personalizar o Radar
+            </a>
+          </p>
+        }
       }
     </header>
 

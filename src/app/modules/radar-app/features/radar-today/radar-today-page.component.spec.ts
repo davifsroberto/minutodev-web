@@ -3,12 +3,15 @@ import {
   HttpTestingController,
   provideHttpClientTesting,
 } from '@angular/common/http/testing';
+import { signal, WritableSignal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 
 import { axe, toHaveNoViolations } from 'jest-axe';
 
 import { environment } from '@environments/environment';
+import { AuthStatus } from '@app/core/auth/auth.model';
+import { AuthService } from '@app/core/auth/auth.service';
 import { RadarBriefing } from '@app/core/radar/radar.model';
 import { CLOCK } from '@app/core/time/clock';
 import { RadarTodayPageComponent } from './radar-today-page.component';
@@ -16,8 +19,11 @@ import { RadarTodayPageComponent } from './radar-today-page.component';
 expect.extend(toHaveNoViolations);
 
 const ENDPOINT = `${environment.apiBaseUrl}/radar/today`;
+const FOR_YOU_ENDPOINT = `${environment.apiBaseUrl}/radar/for-you`;
 const matchRadar = (req: HttpRequest<unknown>): boolean =>
   req.url === ENDPOINT && req.params.get('date') === '2026-06-13';
+const matchForYou = (req: HttpRequest<unknown>): boolean =>
+  req.url === FOR_YOU_ENDPOINT && req.params.get('date') === '2026-06-13';
 
 const expectNoAxeViolations = async (root: HTMLElement): Promise<void> => {
   document.body.appendChild(root);
@@ -128,6 +134,7 @@ function emptyBriefing(): RadarBriefing {
 
 describe('RadarTodayPageComponent', () => {
   let httpTesting: HttpTestingController;
+  let authStatus: WritableSignal<AuthStatus>;
 
   const settle = (fixture: ComponentFixture<unknown>): Promise<void> =>
     fixture.whenStable();
@@ -140,6 +147,8 @@ describe('RadarTodayPageComponent', () => {
       /* sem storage neste ambiente */
     }
 
+    authStatus = signal<AuthStatus>('anonymous');
+
     await TestBed.configureTestingModule({
       imports: [RadarTodayPageComponent],
       providers: [
@@ -150,6 +159,9 @@ describe('RadarTodayPageComponent', () => {
           provide: CLOCK,
           useValue: () => new Date(2026, 5, 13, 9, 0, 0),
         },
+        // O RadarService troca a URL pelo estado de sessão; anônimo mantém
+        // todos os cenários legados em `/radar/today`.
+        { provide: AuthService, useValue: { status: authStatus } },
       ],
     }).compileComponents();
 
@@ -445,6 +457,131 @@ describe('RadarTodayPageComponent', () => {
       httpTesting.expectOne(matchRadar).flush('Server error', {
         status: 500,
         statusText: 'Server Error',
+      });
+      await settle(fixture);
+
+      await expectNoAxeViolations(fixture.nativeElement as HTMLElement);
+    });
+  });
+
+  describe('personalização (12B)', () => {
+    it('autenticado consome /radar/for-you e exibe o selo quando personalized', async () => {
+      authStatus.set('authenticated');
+      const fixture = TestBed.createComponent(RadarTodayPageComponent);
+      TestBed.tick();
+
+      httpTesting.expectOne(matchForYou).flush({
+        ...fullBriefing(),
+        personalized: true,
+        personalizationFallback: false,
+      });
+      await settle(fixture);
+
+      const el = fixture.nativeElement as HTMLElement;
+      expect(
+        el.querySelector('.radar-page__personalized')?.textContent,
+      ).toContain('Baseado nos seus interesses');
+      expect(el.querySelector('.radar-page__interests-cta')).toBeNull();
+      // A ordem dos itens dentro de cada seção é exatamente a da API — nada é
+      // reordenado localmente (a ordem das seções é a fixa da UI).
+      expect(
+        fixture.componentInstance
+          .sections()
+          .flatMap((section) => section.items)
+          .map((item) => item.id),
+      ).toEqual(['trend-1', 'trend-2', 'tool-1', 'tool-2', 'release-1']);
+    });
+
+    it('autenticado sem interesses vê o CTA discreto para /app/preferences', async () => {
+      authStatus.set('authenticated');
+      const fixture = TestBed.createComponent(RadarTodayPageComponent);
+      TestBed.tick();
+
+      httpTesting.expectOne(matchForYou).flush({
+        ...fullBriefing(),
+        personalized: false,
+        personalizationFallback: true,
+      });
+      await settle(fixture);
+
+      const el = fixture.nativeElement as HTMLElement;
+      const cta = el.querySelector<HTMLAnchorElement>(
+        '.radar-page__interests-cta a',
+      );
+      expect(cta?.textContent?.trim()).toBe(
+        'Escolha seus interesses para personalizar o Radar',
+      );
+      expect(cta?.getAttribute('href')).toBe('/app/preferences');
+      expect(el.querySelector('.radar-page__personalized')).toBeNull();
+    });
+
+    it('anônimo continua no radar geral, sem selo e sem CTA', async () => {
+      const fixture = TestBed.createComponent(RadarTodayPageComponent);
+      TestBed.tick();
+
+      httpTesting.expectOne(matchRadar).flush(fullBriefing());
+      await settle(fixture);
+
+      const el = fixture.nativeElement as HTMLElement;
+      expect(el.querySelector('.radar-page__personalized')).toBeNull();
+      expect(el.querySelector('.radar-page__interests-cta')).toBeNull();
+    });
+
+    it('degrada para o radar geral quando o for-you falha', async () => {
+      authStatus.set('authenticated');
+      const fixture = TestBed.createComponent(RadarTodayPageComponent);
+      TestBed.tick();
+
+      httpTesting.expectOne(matchForYou).flush('Server error', {
+        status: 500,
+        statusText: 'Server Error',
+      });
+
+      // Sem `whenStable()` aqui: o fetch de fallback aberto pelo effect fica
+      // pendente e impediria a estabilização — avança ticks até ele existir.
+      let fallback;
+      for (let attempt = 0; attempt < 20 && !fallback; attempt++) {
+        TestBed.tick();
+        [fallback] = httpTesting.match(matchRadar);
+        if (!fallback) await Promise.resolve();
+      }
+      fallback!.flush(fullBriefing());
+      await settle(fixture);
+
+      const el = fixture.nativeElement as HTMLElement;
+      expect(fixture.componentInstance.resolved()).toBe(true);
+      expect(fixture.componentInstance.error()).toBe(false);
+      expect(
+        el.querySelectorAll('app-radar-today-section').length,
+      ).toBeGreaterThan(0);
+      expect(el.querySelector('.radar-page__personalized')).toBeNull();
+      expect(el.querySelector('.radar-page__interests-cta')).toBeNull();
+    });
+
+    it('passa no AXE com o selo de personalização', async () => {
+      authStatus.set('authenticated');
+      const fixture = TestBed.createComponent(RadarTodayPageComponent);
+      TestBed.tick();
+
+      httpTesting.expectOne(matchForYou).flush({
+        ...fullBriefing(),
+        personalized: true,
+        personalizationFallback: false,
+      });
+      await settle(fixture);
+
+      await expectNoAxeViolations(fixture.nativeElement as HTMLElement);
+    });
+
+    it('passa no AXE com o CTA de interesses', async () => {
+      authStatus.set('authenticated');
+      const fixture = TestBed.createComponent(RadarTodayPageComponent);
+      TestBed.tick();
+
+      httpTesting.expectOne(matchForYou).flush({
+        ...fullBriefing(),
+        personalized: false,
+        personalizationFallback: true,
       });
       await settle(fixture);
 

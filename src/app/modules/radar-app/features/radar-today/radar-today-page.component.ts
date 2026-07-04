@@ -5,6 +5,7 @@ import {
   effect,
   inject,
 } from '@angular/core';
+import { RouterLink } from '@angular/router';
 
 import { ContentEnrichmentService } from '@app/core/content/content-enrichment.service';
 import { RadarHighlightCardComponent } from '@app/core/radar/components/radar-highlight-card/radar-highlight-card.component';
@@ -22,7 +23,11 @@ import { RadarTodaySectionComponent } from './components/radar-today-section/rad
 
 @Component({
   selector: 'app-radar-today-page',
-  imports: [RadarTodaySectionComponent, RadarHighlightCardComponent],
+  imports: [
+    RadarTodaySectionComponent,
+    RadarHighlightCardComponent,
+    RouterLink,
+  ],
   templateUrl: './radar-today-page.component.html',
   styleUrl: './radar-today-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -89,6 +94,16 @@ export class RadarTodayPageComponent {
 
   readonly eyebrow = computed(() =>
     this.isFallback() ? 'Último briefing disponível' : 'Radar de Hoje',
+  );
+
+  /** Radar reordenado pelos interesses (flag vem só do `/radar/for-you`). */
+  readonly personalized = computed(
+    () => this.briefing()?.personalized === true,
+  );
+
+  /** Autenticado sem interesses: o backend sinaliza o fallback e a UI convida. */
+  readonly needsInterests = computed(
+    () => this.briefing()?.personalizationFallback === true,
   );
 
   readonly loading = computed(() => this.radar.today.isLoading());

@@ -47,6 +47,39 @@
   line-height: 1;
 }
 
+/* Sinalização discreta da personalização (12B): mesma escala tipográfica das
+   estatísticas para não competir com o conteúdo. */
+.radar-page__personalized {
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-brand-dark);
+  font-size: var(--fs-small);
+  font-weight: 600;
+}
+
+.radar-page__interests-cta {
+  margin: 0;
+  font-size: var(--fs-small);
+}
+
+.radar-page__interests-cta a {
+  color: var(--color-brand-dark);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+.radar-page__interests-cta a:hover {
+  color: var(--color-text);
+}
+
+.radar-page__interests-cta a:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
 .radar-page__body {
   display: grid;
   gap: var(--space-8);

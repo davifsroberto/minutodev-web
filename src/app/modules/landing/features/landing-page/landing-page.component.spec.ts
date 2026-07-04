@@ -3,9 +3,11 @@ import {
   HttpTestingController,
   provideHttpClientTesting,
 } from '@angular/common/http/testing';
+import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 
+import { AuthService } from '@app/core/auth/auth.service';
 import { RadarBriefing } from '@app/core/radar/radar.model';
 import { LandingPageComponent } from './landing-page.component';
 
@@ -43,6 +45,19 @@ describe('LandingPageComponent', () => {
         provideHttpClient(),
         provideHttpClientTesting(),
         provideRouter([]),
+        // Sessão anônima estável: o RadarService reativo fica em /radar/today
+        // (com o AuthService real, `loading` deixaria o resource ocioso). O
+        // mock cobre também a superfície usada pelo AuthMenu do header.
+        {
+          provide: AuthService,
+          useValue: {
+            status: signal('anonymous'),
+            user: signal(null),
+            isAuthenticated: () => false,
+            login: () => undefined,
+            logout: () => Promise.resolve(),
+          },
+        },
       ],
     }).compileComponents();
   });
