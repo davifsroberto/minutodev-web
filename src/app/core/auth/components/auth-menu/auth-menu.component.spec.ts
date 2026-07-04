@@ -93,7 +93,6 @@ describe('AuthMenuComponent', () => {
     const trigger = el.querySelector<HTMLButtonElement>('.user-menu__trigger');
 
     expect(trigger).not.toBeNull();
-    expect(trigger?.getAttribute('aria-haspopup')).toBe('menu');
     expect(trigger?.getAttribute('aria-expanded')).toBe('false');
     expect(el.querySelector<HTMLImageElement>('.user-menu__avatar')?.src).toBe(
       'https://cdn.example.test/ana.png',
@@ -112,9 +111,10 @@ describe('AuthMenuComponent', () => {
 
     const trigger = el.querySelector<HTMLButtonElement>('.user-menu__trigger');
     expect(trigger?.getAttribute('aria-expanded')).toBe('true');
+    expect(trigger?.getAttribute('aria-controls')).toBe('auth-user-menu');
 
     const panel = el.querySelector<HTMLElement>('.user-menu__panel');
-    expect(panel?.getAttribute('role')).toBe('menu');
+    expect(panel).not.toBeNull();
     expect(panel?.querySelector('.user-menu__name')?.textContent).toContain(
       'Ana Dev',
     );
@@ -158,6 +158,28 @@ describe('AuthMenuComponent', () => {
     expect(el.querySelector('.user-menu__panel')).not.toBeNull();
 
     wrapper?.dispatchEvent(hoverEvent('pointerleave', 'mouse'));
+    fixture.detectChanges();
+    expect(el.querySelector('.user-menu__panel')).toBeNull();
+  });
+
+  it('clicar no avatar logo após abrir por hover mantém o menu; segundo clique fecha', async () => {
+    signInAs('Ana Dev', null);
+
+    const el = await setup();
+    const wrapper = el.querySelector<HTMLElement>('.user-menu');
+    const trigger = el.querySelector<HTMLButtonElement>('.user-menu__trigger');
+
+    wrapper?.dispatchEvent(hoverEvent('pointerenter', 'mouse'));
+    fixture.detectChanges();
+    expect(el.querySelector('.user-menu__panel')).not.toBeNull();
+
+    // O clique que "confirma" o hover não pode fechar o menu…
+    trigger?.click();
+    fixture.detectChanges();
+    expect(el.querySelector('.user-menu__panel')).not.toBeNull();
+
+    // …mas um clique deliberado em seguida fecha.
+    trigger?.click();
     fixture.detectChanges();
     expect(el.querySelector('.user-menu__panel')).toBeNull();
   });

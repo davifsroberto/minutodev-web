@@ -1,9 +1,11 @@
 import {
+  afterNextRender,
   ChangeDetectionStrategy,
   Component,
   computed,
   ElementRef,
   inject,
+  Injector,
   signal,
   viewChild,
 } from '@angular/core';
@@ -34,6 +36,7 @@ import { AuthService } from '../../auth.service';
 export class AuthMenuComponent {
   private readonly auth = inject(AuthService);
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
+  private readonly injector = inject(Injector);
 
   private readonly trigger =
     viewChild<ElementRef<HTMLButtonElement>>('trigger');
@@ -43,6 +46,9 @@ export class AuthMenuComponent {
   protected readonly isAuthenticated = this.auth.isAuthenticated;
 
   protected readonly open = signal(false);
+
+  // Distingue abertura por hover da abertura por clique (ver toggleMenu).
+  private openedByHover = false;
 
   // Avatar que falhou ao carregar cai no círculo de iniciais.
   protected readonly avatarBroken = signal(false);
@@ -62,13 +68,36 @@ export class AuthMenuComponent {
     this.auth.login();
   }
 
-  protected logout(): void {
+  protected async logout(): Promise<void> {
     this.open.set(false);
-    void this.auth.logout();
+    await this.auth.logout();
+
+    // O avatar some junto com a sessão e o foco cairia no <body>; devolve-o
+    // ao botão de login assim que o branch anônimo renderizar.
+    afterNextRender(
+      () =>
+        this.host.nativeElement
+          .querySelector<HTMLButtonElement>('.auth-menu__login')
+          ?.focus(),
+      { injector: this.injector },
+    );
   }
 
   protected toggleMenu(): void {
-    this.open.update((value) => !value);
+    if (!this.open()) {
+      this.openedByHover = false;
+      this.open.set(true);
+      return;
+    }
+
+    // Absorve o clique que "confirma" um menu recém-aberto por hover — sem
+    // isso, todo usuário de mouse que clica no avatar fecha o menu sem querer.
+    if (this.openedByHover) {
+      this.openedByHover = false;
+      return;
+    }
+
+    this.open.set(false);
   }
 
   protected closeMenu(): void {
@@ -78,11 +107,22 @@ export class AuthMenuComponent {
   // Hover abre/fecha só para mouse: em touch o pointerenter dispara junto com
   // o tap e faria o clique fechar o menu recém-aberto.
   protected onHoverStart(event: PointerEvent): void {
-    if (event.pointerType === 'mouse') this.open.set(true);
+    if (event.pointerType !== 'mouse') return;
+
+    if (!this.open()) this.openedByHover = true;
+    this.open.set(true);
   }
 
   protected onHoverEnd(event: PointerEvent): void {
     if (event.pointerType === 'mouse') this.open.set(false);
+  }
+
+  /** Fecha quando o foco (teclado) sai do componente — ex.: Tab após o Sair. */
+  protected onFocusOut(event: FocusEvent): void {
+    const next = event.relatedTarget as Node | null;
+    if (next && this.host.nativeElement.contains(next)) return;
+
+    this.open.set(false);
   }
 
   protected onAvatarError(): void {

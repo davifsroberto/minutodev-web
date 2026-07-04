@@ -3,13 +3,13 @@
     class="user-menu"
     (pointerenter)="onHoverStart($event)"
     (pointerleave)="onHoverEnd($event)"
+    (focusout)="onFocusOut($event)"
   >
     <button
       #trigger
       type="button"
       class="user-menu__trigger"
-      aria-haspopup="menu"
-      aria-controls="auth-user-menu"
+      [attr.aria-controls]="open() ? 'auth-user-menu' : null"
       [attr.aria-expanded]="open()"
       [attr.aria-label]="'Menu da conta de ' + currentUser.name"
       (click)="toggleMenu()"
@@ -33,7 +33,7 @@
 
     @if (open()) {
       <div class="user-menu__anchor">
-        <div id="auth-user-menu" class="user-menu__panel" role="menu">
+        <div id="auth-user-menu" class="user-menu__panel">
           <div class="user-menu__identity">
             <p class="user-menu__name">{{ currentUser.name }}</p>
             <p class="user-menu__email">{{ currentUser.email }}</p>
@@ -41,7 +41,6 @@
 
           <a
             class="user-menu__item"
-            role="menuitem"
             routerLink="/app/history"
             (click)="closeMenu()"
           >
@@ -49,7 +48,6 @@
           </a>
           <a
             class="user-menu__item"
-            role="menuitem"
             routerLink="/app/preferences"
             (click)="closeMenu()"
           >
@@ -59,7 +57,6 @@
           <button
             type="button"
             class="user-menu__item user-menu__item--signout"
-            role="menuitem"
             (click)="logout()"
           >
             Sair
